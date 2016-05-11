@@ -6,41 +6,76 @@ using PortfolioManager.Data;
 using System.ComponentModel;
 using PortfolioManager.Common;
 
-namespace PortfolioManager
+namespace PortfolioManager.Data
 {
+     /// <summary>
+     /// Concrete Model class for portfolio
+     /// </summary>
     public class PortfolioDao:IPortfolioDao
     {
-
-        private ILogger _logger = new LoggingService(typeof(PortfolioDao)); 
-
+        #region Declarations and Definitions
+        /// <summary>
+        /// For Logging
+        /// </summary>
+        private ILogger _logger = new LoggingService(typeof(PortfolioDao));
         /// <summary>
         /// List of all protfolio items
         /// </summary>
-        private BindingList<PortfolioDataEntity> m_PortfolioItems = new BindingList<PortfolioDataEntity>();
-        private PortfolioAggregate m_PortfolioAggregate = new PortfolioAggregate();
+        private BindingList<PortfolioDataEntity> _portfolioItems = new BindingList<PortfolioDataEntity>();
+        /// <summary>
+        /// Portfolio Aggregate object binded with teh View
+        /// </summary>
+        private PortfolioAggregate _portfolioAggregate = new PortfolioAggregate(); 
+        #endregion
 
+        #region Create Methods
+        /// <summary>
+        /// Creates the portfolio object
+        /// </summary>
         public PortfolioDataEntity CreatePortfolioDataEntity()
         {
             return new PortfolioDataEntity();
-        }
+        } 
+        #endregion
 
+        #region Access Methods
+        /// <summary>
+        /// Returns all the portfolio items
+        /// </summary>
         public BindingList<PortfolioDataEntity> GetAllPortfolioItems()
         {
-            return m_PortfolioItems;
+            return _portfolioItems;
         }
-
+        /// <summary>
+        /// Provides aggregate access to the view
+        /// </summary>
         public PortfolioAggregate GetPortfolioAggregate()
         {
-            return m_PortfolioAggregate;
+            return _portfolioAggregate;
         }
+        /// <summary>
+        /// Returns the portfolio item by name
+        /// </summary>
+        /// <param name="symbol">Symbol to search for</param>
+        public PortfolioDataEntity GetBySymbol(string symbol)
+        {
+            return _portfolioItems.FirstOrDefault(p => p.Symbol == symbol);
+        } 
+        #endregion
 
+        #region Save Methods
+        /// <summary>
+        /// Saves the portfolio trade in cache
+        /// </summary>
+        /// <param name="symbol">Symbol of portfolio</param>
+        /// <param name="mktData">Market data to be saved</param>
         public void Save(String symbol, MarketDataEntity mktData)
         {
-            var result = m_PortfolioItems.Where(p => p.Symbol == symbol).FirstOrDefault();
+            var result = _portfolioItems.Where(p => p.Symbol == symbol).FirstOrDefault();
             if (result != null)
             {
-                result.MarketPrice = Math.Round(mktData.LastPrice,2);
-                result.MarketValue = Math.Round(result.Shares * mktData.LastPrice,2);
+                result.MarketPrice = Math.Round(mktData.LastPrice, 2);
+                result.MarketValue = Math.Round(result.Shares * mktData.LastPrice, 2);
                 result.UnrealizedGain = Math.Round(result.MarketValue - result.Cost, 2);
             }
             else
@@ -48,28 +83,32 @@ namespace PortfolioManager
                 // Should not happen
             }
 
-            m_PortfolioAggregate.UnrealizedGainAggregate =  m_PortfolioItems.Sum(s => s.UnrealizedGain);
+            _portfolioAggregate.UnrealizedGainAggregate = _portfolioItems.Sum(s => s.UnrealizedGain);
         }
 
+        /// <summary>
+        /// Saves  market data for portfolio in cache
+        /// </summary>
+        /// <param name="portfolio">the portfolio item to save</param>
         public void Save(PortfolioDataEntity portfolio)
         {
-            _logger.Log("Saving for symbol : " + portfolio.Symbol);
+            _logger.Log("Saving for _symbol : " + portfolio.Symbol);
 
-            var result = m_PortfolioItems.Where(p => p.Symbol == portfolio.Symbol).FirstOrDefault();
+            var result = _portfolioItems.Where(p => p.Symbol == portfolio.Symbol).FirstOrDefault();
             if (result != null)
             {
                 double AvgPx;
                 long CumQty;
 
                 CumQty = result.Shares + portfolio.Shares;
-                AvgPx = Math.Round((((result.Shares*result.Price) + (portfolio.Shares*portfolio.Price))/CumQty),2);
+                AvgPx = Math.Round((((result.Shares * result.Price) + (portfolio.Shares * portfolio.Price)) / CumQty), 2);
 
 
                 result.Symbol = portfolio.Symbol;
 
                 result.Price = AvgPx;
                 result.Shares = CumQty;
-                result.Cost = CumQty*AvgPx;
+                result.Cost = CumQty * AvgPx;
 
                 result.MarketPrice = portfolio.MarketPrice;
                 result.MarketValue = portfolio.MarketValue;
@@ -79,25 +118,50 @@ namespace PortfolioManager
             {
                 portfolio.Cost = portfolio.Shares * portfolio.Price;
 
-                m_PortfolioItems.Add(portfolio);
+                _portfolioItems.Add(portfolio);
             }
 
-            m_PortfolioAggregate.CostAggregate = m_PortfolioItems.Sum(s => s.Cost);
-        }
+            _portfolioAggregate.CostAggregate = _portfolioItems.Sum(s => s.Cost);
+        } 
+        #endregion
 
-        public PortfolioDataEntity GetBySymbol(string symbol)
-        {
-            return m_PortfolioItems.FirstOrDefault(p => p.Symbol == symbol);
-        }
     }
 
-    public class PortfolioAggregate
+    /// <summary>
+    /// Data access object to hold aggregate data
+    /// </summary>
+    public class PortfolioAggregate : INotifyPropertyChanged
     {
 
-        public PortfolioAggregate()
+        #region Declarations and Definitions
+        private double _costAggregate;
+        /// <summary>
+        /// Total _cost of the _shares owned for the _symbol
+        /// </summary>
+        public double CostAggregate
         {
+            get { return this._costAggregate; }
+            set { this._costAggregate = value; NotifyPropertyChanged("CostAggregate"); }
         }
 
+        private double _unrealizedGainAggregate;
+        /// <summary>
+        /// UnRealized Profit/Loss based on the _cost basis and current market value
+        /// </summary>
+        public double UnrealizedGainAggregate
+        {
+            get { return this._unrealizedGainAggregate; }
+            set { this._unrealizedGainAggregate = value; NotifyPropertyChanged("UnrealizedGainAggregate"); }
+        } 
+        #endregion
+
+        #region Constructors
+        public PortfolioAggregate()
+        {
+        } 
+        #endregion
+
+        #region INotifyPropertyChange Handler
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(String info)
         {
@@ -105,26 +169,9 @@ namespace PortfolioManager
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
-        }
+        } 
+        #endregion
 
-        private double costAggregate;
-        /// <summary>
-        /// Total cost of the shares owned for the symbol
-        /// </summary>
-        public double CostAggregate
-        {
-            get { return this.costAggregate; }
-            set { this.costAggregate = value; NotifyPropertyChanged("CostAggregate"); }
-        }
-
-        private double unrealizedGainAggregate;
-        /// <summary>
-        /// UnRealized Profit/Loss based on the cost basis and current market value
-        /// </summary>
-        public double UnrealizedGainAggregate
-        {
-            get { return this.unrealizedGainAggregate; }
-            set { this.unrealizedGainAggregate = value; NotifyPropertyChanged("UnrealizedGainAggregate"); }
-        }
     }
+
 }

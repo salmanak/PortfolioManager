@@ -5,22 +5,25 @@ using System.Text;
 
 namespace PortfolioManager.Common
 {
-
+    /// <summary>
+    /// Interface for other classes to log
+    /// </summary>
     public interface ILogger
     {
         void Log(string message);
         void LogError(string message, Exception ex = null);
     }
 
+    /// <summary>
+    /// Wrapper Loggin Service class
+    /// </summary>
     public class LoggingService:ILogger
     {
-        private readonly log4net.ILog _logger;
+        #region Declarations and Definitions
+        private readonly log4net.ILog _logger; 
+        #endregion
 
-        internal static void Init()
-        {
-            log4net.Config.XmlConfigurator.Configure();
-        }
-
+        #region Constructors
         public LoggingService()
         {
             _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -35,7 +38,13 @@ namespace PortfolioManager.Common
         {
             _logger = log4net.LogManager.GetLogger(type);
         }
+        internal static void Init()
+        {
+            log4net.Config.XmlConfigurator.Configure();
+        }
+        #endregion
 
+        #region Logging Methods
         public void Log(string message)
         {
             _logger.Info(message);
@@ -45,7 +54,8 @@ namespace PortfolioManager.Common
         {
             _logger.Error(message, ex);
         }
-
+        
+        #endregion
 
     }
 }

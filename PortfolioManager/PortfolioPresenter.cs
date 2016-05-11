@@ -5,37 +5,63 @@ using System.Text;
 using PortfolioManager.MarketData;
 using PortfolioManager.Common;
 using PortfolioManager.Data;
+using PortfolioManager.View;
 
 namespace PortfolioManager
 {
+    /// <summary>
+    /// The Presenter class that controls the View and Model.
+    /// This also controls the Market Data Access.
+    /// </summary>
     internal class PortfolioPresenter
     {
-
-        private ILogger _logger = new LoggingService(typeof(PortfolioPresenter)); 
-
+        #region Declarations and Definitions
+        /// <summary>
+        /// for Logging
+        /// </summary>
+        private ILogger _logger = new LoggingService(typeof(PortfolioPresenter));
+        /// <summary>
+        /// DAL data mapper
+        /// </summary>
         private TradeDataMapper _tradeDataMapper;
-
+        /// <summary>
+        /// Portfolio View reference
+        /// </summary>
         private readonly IPortfolioView _portfolioView;
+        /// <summary>
+        /// Portfolio Model component to access underlying data
+        /// </summary>
         private readonly IPortfolioDao _portfolioDao;
-
+        /// <summary>
+        /// Market Data Adapter to access market data
+        /// </summary>
         private IMarketData _mktDataAdapter;
-
+        /// <summary>
+        /// setter injection for Market Data Adapter
+        /// </summary>
         public IMarketData MarketDataAdapter
         {
             //get { return _mktDataAdapter; }
-            set 
-            { 
+            set
+            {
                 _mktDataAdapter = value;
-                
+
                 _mktDataAdapter.AddObserver(new ObservableObject<MarketDataEntity>.NotifyObserver(this.OnMarketDataUpdate));
-                
+
                 foreach (var item in _portfolioDao.GetAllPortfolioItems())
                     _mktDataAdapter.Subscribe(item.Symbol);
 
                 _mktDataAdapter.Start();
             }
-        }
+        } 
+        #endregion
 
+        #region Constructor and Initializations
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="view">view attached with the presenter</param>
+        /// <param name="dao">model used by presenter and view</param>
         public PortfolioPresenter(IPortfolioView view, IPortfolioDao dao)
         {
             _portfolioView = view;
@@ -46,9 +72,13 @@ namespace PortfolioManager
                 Save(item);
 
             Update();
-        }
+        } 
+        #endregion
 
-
+        #region General Methods
+        /// <summary>
+        /// called at startup to ensure view is updated
+        /// </summary>
         private void Update()
         {
             _portfolioView.ShowPortfolioItems(_portfolioDao.GetAllPortfolioItems());
@@ -59,11 +89,31 @@ namespace PortfolioManager
 
         }
 
+        /// <summary>
+        /// Called to save a new trade
+        /// </summary>
+        /// <param name="portfolio">trade info that needs to be saved</param>
         private void Save(PortfolioDataEntity portfolio)
         {
             _portfolioDao.Save(portfolio);
         }
 
+        /// <summary>
+        /// Called to close running threads
+        /// </summary>
+        public void Close()
+        {
+            _mktDataAdapter.Stop();
+        } 
+        #endregion
+
+        #region View Methods
+        /// <summary>
+        /// Called from View to add Trade
+        /// </summary>
+        /// <param name="symbol">symbol to add</param>
+        /// <param name="shares">shares for the trade</param>
+        /// <param name="price">price for the trade</param>
         public int AddPortfolioClicked(String symbol, long shares, double price)
         {
 
@@ -74,16 +124,19 @@ namespace PortfolioManager
             _mktDataAdapter.Subscribe(symbol);
 
             return _tradeDataMapper.SaveTrade(symbol, shares, price);
-        }
-
+        } 
+        #endregion
+        
+        #region Events
+        /// <summary>
+        /// Invoked when market data update is received
+        /// </summary>
+        /// <param name="mktData">market data that is received</param>
         public void OnMarketDataUpdate(MarketDataEntity mktData)
         {
             _portfolioDao.Save(mktData.Symbol, mktData);
-        }
+        } 
+        #endregion
 
-        public void Close()
-        {
-            _mktDataAdapter.Stop();
-        }
     }
 }

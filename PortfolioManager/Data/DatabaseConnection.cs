@@ -10,10 +10,23 @@ using PortfolioManager.Common;
 
 namespace PortfolioManager.Data
 {
-    class DatabaseConnection
+    /// <summary>
+    /// Factory class to create the database connection based on the configuration
+    /// </summary>
+    public class DatabaseConnection
     {
-        private ILogger _logger = new LoggingService(typeof(DatabaseConnection)); 
+        #region Declarations and Definitions
+        /// <summary>
+        /// for logging
+        /// </summary>
+        private ILogger _logger = new LoggingService(typeof(DatabaseConnection));  
+        #endregion
 
+        #region Methods
+        /// <summary>
+        /// Creates a connection based on teh configuration
+        /// </summary>
+        /// <returns>returns the database connection object</returns>
         public IDbConnection CreateConnection()
         {
             try
@@ -30,6 +43,8 @@ namespace PortfolioManager.Data
                 _logger.LogError("Unable to create Connection.", ex);
                 return null;
             }
-        }
+        } 
+        #endregion
+
     }
 }

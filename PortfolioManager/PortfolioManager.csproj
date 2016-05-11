@@ -93,6 +93,7 @@
     <None Include="app.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="PortfolioManagerClassDiagram.cd" />
     <None Include="Properties\DataSources\IPortfolioDao.datasource" />
     <None Include="Properties\DataSources\PortfolioAggregate.datasource" />
     <None Include="Properties\DataSources\PortfolioDao.datasource" />

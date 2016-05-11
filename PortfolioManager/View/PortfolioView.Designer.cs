@@ -1,4 +1,4 @@
-﻿namespace PortfolioManager
+﻿namespace PortfolioManager.View
 {
     partial class PortfolioView
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.panelGrid = new System.Windows.Forms.Panel();
             this.dataGridViewPortfolio = new System.Windows.Forms.DataGridView();
             this.panelAction = new System.Windows.Forms.Panel();
@@ -44,7 +43,6 @@
             this.labelUnRlzPL = new System.Windows.Forms.Label();
             this.lblPortfolioCost = new System.Windows.Forms.Label();
             this.labelPortfolioCost = new System.Windows.Forms.Label();
-            this.tmrAggregate = new System.Windows.Forms.Timer(this.components);
             this.panelGrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPortfolio)).BeginInit();
             this.panelAction.SuspendLayout();
@@ -196,11 +194,6 @@
             this.labelPortfolioCost.TabIndex = 2;
             this.labelPortfolioCost.Text = "Portfolio Cost ($):";
             // 
-            // tmrAggregate
-            // 
-            this.tmrAggregate.Interval = 700;
-            this.tmrAggregate.Tick += new System.EventHandler(this.tmrAggregate_Tick);
-            // 
             // PortfolioView
             // 
             this.AcceptButton = this.btnAddTrade;
@@ -240,7 +233,6 @@
         private System.Windows.Forms.Label labelUnRlzPL;
         private System.Windows.Forms.Label lblPortfolioCost;
         private System.Windows.Forms.Label labelPortfolioCost;
-        private System.Windows.Forms.Timer tmrAggregate;
     }
 }
 

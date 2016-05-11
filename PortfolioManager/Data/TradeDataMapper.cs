@@ -10,17 +10,37 @@ using PortfolioManager.Common;
 
 namespace PortfolioManager.Data
 {
+    /// <summary>
+    /// Data Access Layer for bidirection data access to persistent data store
+    /// </summary>
     public class TradeDataMapper
     {
+        #region Declarations and Definitions
+        /// <summary>
+        /// For Logging
+        /// </summary>
         private ILogger _logger = new LoggingService(typeof(TradeDataMapper));
-        
-        private DatabaseConnection _dbConnection;
-        
+        /// <summary>
+        /// Database Connection object
+        /// </summary>
+        private DatabaseConnection _dbConnection; 
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public TradeDataMapper()
         {
             _dbConnection = new DatabaseConnection();
-        }
+        } 
+        #endregion
 
+        #region Methods
+        /// <summary>
+        /// Gets all trades from the database
+        /// </summary>
+        /// <returns>All trades</returns>
         public IEnumerable<PortfolioDataEntity> GetAllTrades()
         {
             _logger.Log("Getting Trades from DB.");
@@ -57,7 +77,13 @@ namespace PortfolioManager.Data
                 }
             }
         }
-
+        /// <summary>
+        /// Saves the Trade in the database
+        /// </summary>
+        /// <param name="symbol">symbol for the trade</param>
+        /// <param name="shares">shares for the trade</param>
+        /// <param name="price">price for the trade</param>
+        /// <returns> (0) Success (-1) DB Error (-2) Db Connection Open error</returns>
         public int SaveTrade(String symbol, long shares, double price)
         {
             try
@@ -99,5 +125,7 @@ namespace PortfolioManager.Data
                 return -2;
             }
         }
+        
+        #endregion
     }
 }

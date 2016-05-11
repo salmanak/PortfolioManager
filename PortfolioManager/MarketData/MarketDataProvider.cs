@@ -9,10 +9,25 @@ using PortfolioManager.Common;
 
 namespace PortfolioManager.MarketData
 {
+    /// <summary>
+    /// Concrete class to represent the external market data provider
+    /// in this case connects to BarChart OnDemand REST API
+    /// </summary>
     class MarketDataProvider
     {
-        private static ILogger _logger = new LoggingService(typeof(MarketDataProvider)); 
+        #region Declarations and Definitions
+        /// <summary>
+        /// For Logging
+        /// </summary>
+        private static ILogger _logger = new LoggingService(typeof(MarketDataProvider));  
+        #endregion
 
+        #region Methods
+        /// <summary>
+        /// Gets Quote from external market data provider
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <returns>returns the market data AS-IS. Need to make it loosely coupled</returns>
         public static RootObject_getQuote GetQuote(string symbol)
         {
             try
@@ -23,7 +38,7 @@ namespace PortfolioManager.MarketData
                     return null;
                 url_getQuote += "&symbols=";
                 url_getQuote += symbol;
-                
+
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url_getQuote);
 
                 string proxyAddress = MarketDataSettings.GetConfiguration().ProxyAddress;
@@ -40,17 +55,17 @@ namespace PortfolioManager.MarketData
                 {
                     StreamReader reader = new StreamReader(webResponse.GetResponseStream());
                     string s = reader.ReadToEnd();
-                                        
+
                     var serializer = new JavaScriptSerializer();
                     RootObject_getQuote arr = serializer.Deserialize<RootObject_getQuote>(s);
 
+                    //TODO: Need to make it loosely coupled
                     return arr;
 
                 }
                 else
                 {
-                    Console.WriteLine(string.Format("Status code == {0}, Content length == {1}",
-                      webResponse.StatusCode, webResponse.ContentLength));
+                    _logger.Log(string.Format("Status code == {0}, Content length == {1}", webResponse.StatusCode, webResponse.ContentLength));
                 }
             }
             catch (Exception ex)
@@ -59,8 +74,11 @@ namespace PortfolioManager.MarketData
             }
             return null;
         }
+        
+        #endregion
     }
 
+    #region REST/JSON Objects
     //
     // Classes generated using 
     // http://json2csharp.com/
@@ -96,6 +114,7 @@ namespace PortfolioManager.MarketData
     {
         public Status status { get; set; }
         public List<Result_getQuote> results { get; set; }
-    }
+    } 
+    #endregion
 
 }

@@ -7,8 +7,16 @@ using System.Configuration;
 
 namespace PortfolioManager.Common
 {
+    /// <summary>
+    /// Class to get Market Data Settings from Configuration
+    /// </summary>
     public class MarketDataSettings : ConfigurationSection
     {
+        #region Methods
+        /// <summary>
+        /// Gets the configuration from Configuration File
+        /// </summary>
+        /// <returns></returns>
         public static MarketDataSettings GetConfiguration()
         {
             MarketDataSettings configuration =
@@ -20,8 +28,10 @@ namespace PortfolioManager.Common
                 return configuration;
 
             return new MarketDataSettings();
-        }
+        } 
+        #endregion
 
+        #region Properties
         [ConfigurationProperty("url", IsRequired = false)]
         public string URL
         {
@@ -38,7 +48,8 @@ namespace PortfolioManager.Common
             {
                 return this["proxyAddress"] as string;
             }
-        }
+        } 
+        #endregion
     }
 
 }

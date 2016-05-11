@@ -7,6 +7,9 @@ using System.ComponentModel;
 
 namespace PortfolioManager.View
 {
+    /// <summary>
+    /// Wrapper class over the BindingSource to provide thread safety
+    /// </summary>
     class BindingSourceEx:BindingSource
     {
         private Control _ctl;
@@ -24,8 +27,6 @@ namespace PortfolioManager.View
             else
                 base.OnListChanged(e);
         }
-
-        
 
         /*
         private delegate void IndexListChangedDelegate(object sender, ListChangedEventArgs e);

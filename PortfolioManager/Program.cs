@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows.Forms;
 using PortfolioManager.MarketData;
 using PortfolioManager.Common;
+using PortfolioManager.View;
+using PortfolioManager.Data;
 
 namespace PortfolioManager
 {

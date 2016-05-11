@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using PortfolioManager;
+using PortfolioManager.Data;
 
 namespace PortfolioManagerTest
 {
@@ -104,7 +105,6 @@ namespace PortfolioManagerTest
             Assert.AreEqual(expectedShares, actualShares, 0.0, "Cummulative Shares computed incorrectly");
             Assert.AreEqual(expecctedPrice, actualPrice, 0.0, "Weighted Average Price computed incorrectly");
         }
-
 
         [TestMethod]
         public void TransactionsWithDifferentSharesDifferentPrices()

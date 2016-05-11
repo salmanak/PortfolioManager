@@ -9,18 +9,35 @@ using System.Windows.Forms;
 using PortfolioManager.MarketData;
 using PortfolioManager.View;
 using PortfolioManager.Common;
+using PortfolioManager.Data;
 
-namespace PortfolioManager
+namespace PortfolioManager.View
 {
     public partial class PortfolioView : Form, IPortfolioView
     {
-        private ILogger _logger = new LoggingService(typeof(PortfolioView)); 
-
+        #region Declarations and Definitions
+        /// <summary>
+        /// For Logging
+        /// </summary>
+        private ILogger _logger = new LoggingService(typeof(PortfolioView));
+        /// <summary>
+        /// Reference to the Presenter
+        /// </summary>
         private PortfolioPresenter _presenter;
-
+        /// <summary>
+        /// Binding Source for Portfolios
+        /// </summary>
         private BindingSourceEx _bindingSourcePortfolio;
-        private BindingSourceEx _bindingSourcePortfolioAggregate;
+        /// <summary>
+        /// Binding Source for Aggregates
+        /// </summary>
+        private BindingSourceEx _bindingSourcePortfolioAggregate; 
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public PortfolioView()
         {
             InitializeComponent();
@@ -31,25 +48,44 @@ namespace PortfolioManager
 
         }
 
+        /// <summary>
+        /// Constructor with Model injection
+        /// </summary>
+        /// <param name="dao">Model</param>
         public PortfolioView(PortfolioDao dao)
             : this()
         {
             _presenter = new PortfolioPresenter(this, dao);
         }
 
+        /// <summary>
+        /// Constructor with Model and Market Data injection
+        /// </summary>
+        /// <param name="dao">Model</param>
+        /// <param name="mktDataAdapter">Market Data</param>
         public PortfolioView(IPortfolioDao dao, IMarketData mktDataAdapter)
-            :this()
+            : this()
         {
             _presenter = new PortfolioPresenter(this, dao);
             _presenter.MarketDataAdapter = mktDataAdapter;
-        }
+        } 
+        #endregion
 
+        #region Methods for binding
+        /// <summary>
+        /// To bind with the portfolio list
+        /// </summary>
+        /// <param name="PortfolioItemsList">portfolio list to be bound with</param>
         public void ShowPortfolioItems(BindingList<PortfolioDataEntity> PortfolioItemsList)
         {
             _bindingSourcePortfolio.DataSource = PortfolioItemsList;
             dataGridViewPortfolio.DataSource = _bindingSourcePortfolio;
         }
 
+        /// <summary>
+        /// To bind with the aggregate object
+        /// </summary>
+        /// <param name="portfolioAggregate">Aggeregate object to be bound with</param>
         public void ShowPortfolioAggregate(PortfolioAggregate portfolioAggregate)
         {
             _bindingSourcePortfolioAggregate.DataSource = typeof(PortfolioAggregate);
@@ -58,16 +94,19 @@ namespace PortfolioManager
             lblPortfolioCost.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "CostAggregate", false, DataSourceUpdateMode.OnPropertyChanged);
             lblUnRlzPLValue.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "UnrealizedGainAggregate", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            tmrAggregate.Enabled = true;
             //bindingSourcePortfolioAggregate.ResetBindings(false); // might not be needed
         }
-
-
+        /// <summary>
+        /// Reset the binding of grid
+        /// </summary>
         public void UpdatePortfolioItems()
         {
             _bindingSourcePortfolio.ResetBindings(false);
         }
 
+        #endregion
+        
+        #region Control and Form Events
         private void btnAddTrade_Click(object sender, EventArgs e)
         {
             try
@@ -106,16 +145,8 @@ namespace PortfolioManager
 
         private void PortfolioView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            tmrAggregate.Enabled = false;
             _presenter.Close();
         }
-
-        private void tmrAggregate_Tick(object sender, EventArgs e)
-        {
-            // Workaround as the Property Change is not working
-            _bindingSourcePortfolioAggregate.ResetBindings(false);
-        }
-
 
         private void txtSymbol_Validating(object sender, CancelEventArgs e)
         {
@@ -124,7 +155,7 @@ namespace PortfolioManager
 
             if (txtSymbol.Text.Length > maxLength)
             {
-                MessageBox.Show("Please enter correct symbol.");
+                MessageBox.Show("Please enter correct _symbol.");
                 txtSymbol.Text = txtSymbol.Text.Substring(0, maxLength);
             }
         }
@@ -137,13 +168,13 @@ namespace PortfolioManager
             {
                 if (numberEntered < 1 || numberEntered > 100000000)
                 {
-                    MessageBox.Show("Please enter correct shares.");
+                    MessageBox.Show("Please enter correct _shares.");
                     txtShares.Text = "0";
                 }
             }
             else
             {
-                MessageBox.Show("Please enter correct shares");
+                MessageBox.Show("Please enter correct _shares");
                 txtShares.Text = "0";
             }
 
@@ -158,18 +189,18 @@ namespace PortfolioManager
             {
                 if (numberEntered < 1 || numberEntered > 10000)
                 {
-                    MessageBox.Show("Please enter correct price.");
+                    MessageBox.Show("Please enter correct _price.");
                     txtPrice.Text = "0";
                 }
             }
             else
             {
-                MessageBox.Show("Please enter correct price");
+                MessageBox.Show("Please enter correct _price");
                 txtPrice.Text = "0";
             }
 
-        }
-
+        } 
+        #endregion
 
     }
 }
