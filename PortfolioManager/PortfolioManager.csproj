@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>External\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -49,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\LoggingService.cs" />
+    <Compile Include="Common\MarketDataSettings.cs" />
     <Compile Include="Common\ObservableObject.cs" />
     <Compile Include="Data\DatabaseConnection.cs" />
     <Compile Include="Data\MarketDataEntity.cs" />
@@ -85,7 +90,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\DataSources\IPortfolioDao.datasource" />
     <None Include="Properties\DataSources\PortfolioAggregate.datasource" />
     <None Include="Properties\DataSources\PortfolioDao.datasource" />
