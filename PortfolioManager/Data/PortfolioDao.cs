@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using PortfolioManager.Data;
 using System.ComponentModel;
+using PortfolioManager.Common;
 
 namespace PortfolioManager
 {
     public class PortfolioDao:IPortfolioDao
     {
+
+        private ILogger _logger = new LoggingService(typeof(PortfolioDao)); 
+
         /// <summary>
         /// List of all protfolio items
         /// </summary>
@@ -49,6 +53,8 @@ namespace PortfolioManager
 
         public void Save(PortfolioDataEntity portfolio)
         {
+            _logger.Log("Saving for symbol : " + portfolio.Symbol);
+
             var result = m_PortfolioItems.Where(p => p.Symbol == portfolio.Symbol).FirstOrDefault();
             if (result != null)
             {

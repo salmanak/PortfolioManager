@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using PortfolioManager.MarketData;
+using PortfolioManager.Common;
 
 namespace PortfolioManager
 {
@@ -16,6 +17,8 @@ namespace PortfolioManager
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            LoggingService.Init();
 
             IPortfolioDao dao = new PortfolioDao();
             IMarketData mktDataAdapter = new MarketDataAdapter();
