@@ -18,7 +18,6 @@ namespace PortfolioManager.Data
             var factory = DbProviderFactories.GetFactory(providerName);
             var connection = factory.CreateConnection();
             connection.ConnectionString = connectionString.ConnectionString;
-            //connection.Open();
             return connection;
         }
     }
