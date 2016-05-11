@@ -6,6 +6,7 @@ using System.Net;
 using System.IO;
 using System.Web.Script.Serialization;
 using PortfolioManager.Common;
+using PortfolioManager.Data;
 
 namespace PortfolioManager.MarketData
 {
@@ -28,7 +29,7 @@ namespace PortfolioManager.MarketData
         /// </summary>
         /// <param name="symbol"></param>
         /// <returns>returns the market data AS-IS. Need to make it loosely coupled</returns>
-        public static RootObject_getQuote GetQuote(string symbol)
+        private static RootObject_getQuote GetQuoteInternal(string symbol)
         {
             try
             {
@@ -74,7 +75,31 @@ namespace PortfolioManager.MarketData
             }
             return null;
         }
-        
+
+        /// <summary>
+        /// Public method to get the market data. Calls internal method to get data in provider format.
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <returns></returns>
+        public static MarketDataEntity GetQuote(string symbol)
+        {
+            RootObject_getQuote q = GetQuoteInternal(symbol);
+
+            if (q != null)
+            {
+                if (q.results.Count > 0)
+                {
+                    if (q.results[0] != null)
+                    {
+                        return new MarketDataEntity(symbol, q.results[0].lastPrice);
+                    }
+                }
+            }
+
+            _logger.LogError("Unable to process the Quote Response.");
+            return null;
+        }
+
         #endregion
     }
 

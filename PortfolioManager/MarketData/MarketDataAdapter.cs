@@ -42,11 +42,11 @@ namespace PortfolioManager.MarketData
         /// <returns>Last Price of the symbol</returns>
         private double GetLastPrice(string symbol)
         {
-            RootObject_getQuote arr = MarketDataProvider.GetQuote(symbol);
+            MarketDataEntity mktData = MarketDataProvider.GetQuote(symbol);
 
-            if (arr != null)
+            if (mktData != null)
             {
-                return arr.results[0].lastPrice;
+                return mktData.LastPrice;
             }
             else
             {
