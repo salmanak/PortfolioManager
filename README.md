@@ -3,6 +3,9 @@
 APPLICATION OVERVIEW
 The application is a sample application where user can enter Equity Trades for his portfolio positions. The application will manage and display the average price for individual positions and the unrealized profit and loss based on simulated market data prices.
 
+COMPILATION
+The code can be compiled in Visual Studio 2010 (.NET Framework 4.0) using Microsoft C#.
+
 DEPENDENCIES
 In order to run the application with full features, please use the script (MS SQL 2008) to create a database named "PortfolioManager". If you are behind a proxy server, then you can specify the proxy address:proxy port in the config file as marketDataSettings\proxyAddress.
 
