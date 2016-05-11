@@ -42,10 +42,8 @@
             this.panelSummary = new System.Windows.Forms.Panel();
             this.lblUnRlzPLValue = new System.Windows.Forms.Label();
             this.labelUnRlzPL = new System.Windows.Forms.Label();
-            this.lblMktValue = new System.Windows.Forms.Label();
-            this.labelMktValue = new System.Windows.Forms.Label();
-            this.labelAvCashValue = new System.Windows.Forms.Label();
-            this.labelAvCash = new System.Windows.Forms.Label();
+            this.lblPortfolioCost = new System.Windows.Forms.Label();
+            this.labelPortfolioCost = new System.Windows.Forms.Label();
             this.tmrAggregate = new System.Windows.Forms.Timer(this.components);
             this.panelGrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPortfolio)).BeginInit();
@@ -105,6 +103,7 @@
             this.txtPrice.Name = "txtPrice";
             this.txtPrice.Size = new System.Drawing.Size(100, 20);
             this.txtPrice.TabIndex = 7;
+            this.txtPrice.Validating += new System.ComponentModel.CancelEventHandler(this.txtPrice_Validating);
             // 
             // txtShares
             // 
@@ -112,6 +111,7 @@
             this.txtShares.Name = "txtShares";
             this.txtShares.Size = new System.Drawing.Size(100, 20);
             this.txtShares.TabIndex = 6;
+            this.txtShares.Validating += new System.ComponentModel.CancelEventHandler(this.txtShares_Validating);
             // 
             // labelPrice
             // 
@@ -137,6 +137,7 @@
             this.txtSymbol.Name = "txtSymbol";
             this.txtSymbol.Size = new System.Drawing.Size(100, 20);
             this.txtSymbol.TabIndex = 2;
+            this.txtSymbol.Validating += new System.ComponentModel.CancelEventHandler(this.txtSymbol_Validating);
             // 
             // labelSymbol
             // 
@@ -151,10 +152,8 @@
             // 
             this.panelSummary.Controls.Add(this.lblUnRlzPLValue);
             this.panelSummary.Controls.Add(this.labelUnRlzPL);
-            this.panelSummary.Controls.Add(this.lblMktValue);
-            this.panelSummary.Controls.Add(this.labelMktValue);
-            this.panelSummary.Controls.Add(this.labelAvCashValue);
-            this.panelSummary.Controls.Add(this.labelAvCash);
+            this.panelSummary.Controls.Add(this.lblPortfolioCost);
+            this.panelSummary.Controls.Add(this.labelPortfolioCost);
             this.panelSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelSummary.Location = new System.Drawing.Point(0, 140);
             this.panelSummary.Name = "panelSummary";
@@ -179,41 +178,23 @@
             this.labelUnRlzPL.TabIndex = 4;
             this.labelUnRlzPL.Text = "Un-Realized Profit/Loss ($):";
             // 
-            // lblMktValue
+            // lblPortfolioCost
             // 
-            this.lblMktValue.AutoSize = true;
-            this.lblMktValue.Location = new System.Drawing.Point(15, 59);
-            this.lblMktValue.Name = "lblMktValue";
-            this.lblMktValue.Size = new System.Drawing.Size(22, 13);
-            this.lblMktValue.TabIndex = 3;
-            this.lblMktValue.Text = "0.0";
+            this.lblPortfolioCost.AutoSize = true;
+            this.lblPortfolioCost.Location = new System.Drawing.Point(15, 59);
+            this.lblPortfolioCost.Name = "lblPortfolioCost";
+            this.lblPortfolioCost.Size = new System.Drawing.Size(22, 13);
+            this.lblPortfolioCost.TabIndex = 3;
+            this.lblPortfolioCost.Text = "0.0";
             // 
-            // labelMktValue
+            // labelPortfolioCost
             // 
-            this.labelMktValue.AutoSize = true;
-            this.labelMktValue.Location = new System.Drawing.Point(13, 46);
-            this.labelMktValue.Name = "labelMktValue";
-            this.labelMktValue.Size = new System.Drawing.Size(85, 13);
-            this.labelMktValue.TabIndex = 2;
-            this.labelMktValue.Text = "MarketValue ($):";
-            // 
-            // labelAvCashValue
-            // 
-            this.labelAvCashValue.AutoSize = true;
-            this.labelAvCashValue.Location = new System.Drawing.Point(15, 29);
-            this.labelAvCashValue.Name = "labelAvCashValue";
-            this.labelAvCashValue.Size = new System.Drawing.Size(22, 13);
-            this.labelAvCashValue.TabIndex = 1;
-            this.labelAvCashValue.Text = "0.0";
-            // 
-            // labelAvCash
-            // 
-            this.labelAvCash.AutoSize = true;
-            this.labelAvCash.Location = new System.Drawing.Point(12, 12);
-            this.labelAvCash.Name = "labelAvCash";
-            this.labelAvCash.Size = new System.Drawing.Size(83, 13);
-            this.labelAvCash.TabIndex = 0;
-            this.labelAvCash.Text = "Available Cash :";
+            this.labelPortfolioCost.AutoSize = true;
+            this.labelPortfolioCost.Location = new System.Drawing.Point(13, 46);
+            this.labelPortfolioCost.Name = "labelPortfolioCost";
+            this.labelPortfolioCost.Size = new System.Drawing.Size(87, 13);
+            this.labelPortfolioCost.TabIndex = 2;
+            this.labelPortfolioCost.Text = "Portfolio Cost ($):";
             // 
             // tmrAggregate
             // 
@@ -222,6 +203,7 @@
             // 
             // PortfolioView
             // 
+            this.AcceptButton = this.btnAddTrade;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(971, 271);
@@ -256,10 +238,8 @@
         private System.Windows.Forms.Panel panelSummary;
         private System.Windows.Forms.Label lblUnRlzPLValue;
         private System.Windows.Forms.Label labelUnRlzPL;
-        private System.Windows.Forms.Label lblMktValue;
-        private System.Windows.Forms.Label labelMktValue;
-        private System.Windows.Forms.Label labelAvCashValue;
-        private System.Windows.Forms.Label labelAvCash;
+        private System.Windows.Forms.Label lblPortfolioCost;
+        private System.Windows.Forms.Label labelPortfolioCost;
         private System.Windows.Forms.Timer tmrAggregate;
     }
 }
