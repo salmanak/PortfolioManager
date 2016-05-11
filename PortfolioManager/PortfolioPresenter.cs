@@ -10,6 +10,9 @@ namespace PortfolioManager
 {
     internal class PortfolioPresenter
     {
+
+        private ILogger _logger = new LoggingService(typeof(PortfolioPresenter)); 
+
         private TradeDataMapper _tradeDataMapper;
 
         private readonly IPortfolioView _portfolioView;
@@ -64,17 +67,13 @@ namespace PortfolioManager
         public int AddPortfolioClicked(String symbol, long shares, double price)
         {
 
-            if (_tradeDataMapper.SaveTrade(symbol, shares, price) < 0)
-                return -1;
-
             Save(new PortfolioDataEntity(symbol, shares, price));
 
             _portfolioView.UpdatePortfolioItems();
 
             _mktDataAdapter.Subscribe(symbol);
 
-            return 0;
-            
+            return _tradeDataMapper.SaveTrade(symbol, shares, price);
         }
 
         public void OnMarketDataUpdate(MarketDataEntity mktData)

@@ -5,26 +5,34 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.Web.Script.Serialization;
+using PortfolioManager.Common;
 
 namespace PortfolioManager.MarketData
 {
     class MarketDataProvider
     {
+        private static ILogger _logger = new LoggingService(typeof(MarketDataProvider)); 
+
         public static RootObject_getQuote GetQuote(string symbol)
         {
             try
             {
-                //TODO: Generalize
-                //TODO: Configuration
-
-                //string url_getQuote = "http://marketdata.websol.barchart.com/getQuote.json?key=75dd0aebc8c6e5a9c8d1b9be02cf5ba9&symbols=IBM,FB,AAPL,GOOG";
-                string url_getQuote = "http://marketdata.websol.barchart.com/getQuote.json?key=75dd0aebc8c6e5a9c8d1b9be02cf5ba9&symbols=" + symbol;
+                //"http://marketdata.websol.barchart.com/getQuote.json?key=75dd0aebc8c6e5a9c8d1b9be02cf5ba9&symbols="
+                string url_getQuote = MarketDataSettings.GetConfiguration().URL;
+                if (string.IsNullOrEmpty(url_getQuote))
+                    return null;
+                url_getQuote += "&symbols=";
+                url_getQuote += symbol;
+                
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url_getQuote);
 
-                WebProxy proxyObj = new WebProxy("http://nycproxy01.wallstreetsystems.com:8080");
-                proxyObj.Credentials = CredentialCache.DefaultCredentials;
-
-                webRequest.Proxy = proxyObj;
+                string proxyAddress = MarketDataSettings.GetConfiguration().ProxyAddress;
+                if (!string.IsNullOrEmpty(proxyAddress))
+                {
+                    WebProxy proxyObj = new WebProxy(proxyAddress);
+                    proxyObj.Credentials = CredentialCache.DefaultCredentials;
+                    webRequest.Proxy = proxyObj;
+                }
 
                 HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
 
@@ -47,7 +55,7 @@ namespace PortfolioManager.MarketData
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError("Unable to create Connection.", ex);
             }
             return null;
         }
