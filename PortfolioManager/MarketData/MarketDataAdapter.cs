@@ -151,10 +151,10 @@ namespace PortfolioManager.MarketData
 
                         mkt.LastPrice += (directionUp) ? 0.2 : -0.2;
 
-                        Notify(mkt);
+                        Notify(new MarketDataEntity(mkt));
                     }
                 }
-                Thread.Sleep(750); //TODO: Get from config
+                Thread.Sleep(100); //TODO: Get from config
             }
             _logger.Log("simulator _thread stopped.");
         }

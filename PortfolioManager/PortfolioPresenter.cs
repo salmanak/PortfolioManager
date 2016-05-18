@@ -53,7 +53,10 @@ namespace PortfolioManager
 
                 _mktDataAdapter.Start();
             }
-        } 
+        }
+
+        private AutoQueue<MarketDataEntity> _mktDataQueue;
+
         #endregion
 
         #region Constructor and Initializations
@@ -72,6 +75,10 @@ namespace PortfolioManager
                 Save(item);
 
             Update();
+
+            _mktDataQueue = new AutoQueue<MarketDataEntity>(250); // TODO: get from config
+            _mktDataQueue.signalEvent += new AutoQueueEventHandler<AutoQueue<MarketDataEntity>, IEnumerable<AutoQueue<MarketDataEntity>.GenericsEventArgs<MarketDataEntity>>>(OnSignalled);
+            _mktDataQueue.Start();
         } 
         #endregion
 
@@ -103,6 +110,7 @@ namespace PortfolioManager
         /// </summary>
         public void Close()
         {
+            _mktDataQueue.Stop();
             _mktDataAdapter.Stop();
         } 
         #endregion
@@ -126,7 +134,7 @@ namespace PortfolioManager
             return _tradeDataMapper.SaveTrade(symbol, shares, price);
         } 
         #endregion
-        
+
         #region Events
         /// <summary>
         /// Invoked when market data update is received
@@ -134,9 +142,20 @@ namespace PortfolioManager
         /// <param name="mktData">market data that is received</param>
         public void OnMarketDataUpdate(MarketDataEntity mktData)
         {
-            _portfolioDao.Save(mktData.Symbol, mktData);
-        } 
+            _mktDataQueue.Enqueue(mktData);          
+        }
+
+        public void OnSignalled(AutoQueue<MarketDataEntity> q,  IEnumerable<AutoQueue<MarketDataEntity>.GenericsEventArgs<MarketDataEntity>> args) 
+        {
+            foreach (AutoQueue<MarketDataEntity>.GenericsEventArgs<MarketDataEntity>item in args )
+            {
+                MarketDataEntity mktData = item.Item;
+                _portfolioDao.Save(mktData.Symbol, mktData);
+            }
+            
+        }
         #endregion
+
 
     }
 }

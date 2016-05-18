@@ -20,6 +20,16 @@ namespace PortfolioManager.Data
         {
             this._lastPrice = lastPrice;
             this._symbol = symbol;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="mkt">object from which the values need to be copied</param>
+        public MarketDataEntity(MarketDataEntity mkt)
+        {
+            this._lastPrice = mkt.LastPrice;
+            this._symbol = mkt.Symbol;
         } 
         #endregion
 
@@ -38,6 +48,7 @@ namespace PortfolioManager.Data
         /// Current _price for the _symbol
         /// </summary>
         private double _lastPrice;
+        private MarketDataEntity mkt;
 
         public double LastPrice
         {
