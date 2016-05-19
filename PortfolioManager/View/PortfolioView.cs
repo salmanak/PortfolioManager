@@ -94,7 +94,6 @@ namespace PortfolioManager.View
             lblPortfolioCost.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "CostAggregate", false, DataSourceUpdateMode.OnPropertyChanged);
             lblUnRlzPLValue.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "UnrealizedGainAggregate", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            //bindingSourcePortfolioAggregate.ResetBindings(false); // might not be needed
         }
         /// <summary>
         /// Reset the binding of grid
