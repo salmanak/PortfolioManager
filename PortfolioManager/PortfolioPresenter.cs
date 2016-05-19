@@ -6,6 +6,8 @@ using PortfolioManager.MarketData;
 using PortfolioManager.Common;
 using PortfolioManager.Data;
 using PortfolioManager.View;
+using System.Threading.Tasks;
+using System.Runtime.Remoting.Messaging;
 
 namespace PortfolioManager
 {
@@ -48,11 +50,16 @@ namespace PortfolioManager
 
                 _mktDataAdapter.AddObserver(new ObservableObject<MarketDataEntity>.NotifyObserver(this.OnMarketDataUpdate));
 
-                foreach (var item in _portfolioDao.GetAllPortfolioItems())
-                    _mktDataAdapter.Subscribe(item.Symbol);
+                SubscribeMarketData();
 
                 _mktDataAdapter.Start();
             }
+        }
+
+        private void SubscribeMarketData()
+        {
+            foreach (var item in _portfolioDao.GetAllPortfolioItems())
+                _mktDataAdapter.Subscribe(item.Symbol);
         }
 
         private AutoQueue<MarketDataEntity> _mktDataQueue;
@@ -69,13 +76,61 @@ namespace PortfolioManager
         {
             _portfolioView = view;
             _portfolioDao = dao;
-
             _tradeDataMapper = new TradeDataMapper();
-            foreach (var item in _tradeDataMapper.GetAllTrades())
+
+            UpdateGUI();
+
+            //ProcessAllTrades(GetAllTrades());
+
+            GetAllTradesMethodCaller caller = new GetAllTradesMethodCaller(this.GetAllTrades);
+            IAsyncResult result = caller.BeginInvoke(new AsyncCallback(GetAllTradesComplete),"The call executed on thread {0}, with return value \"{1}\".");
+
+
+            //var task = Task.Factory.StartNew(() => ProcessAllTrades());
+            //task.Wait();
+            ////GetAllTrades();
+            
+            InitMarketDataQueue();
+        }
+
+
+        // The callback method must have the same signature as the
+        // AsyncCallback delegate.
+        void GetAllTradesComplete(IAsyncResult ar)
+        {
+            // Retrieve the delegate.
+            AsyncResult result = (AsyncResult)ar;
+            GetAllTradesMethodCaller caller = (GetAllTradesMethodCaller)result.AsyncDelegate;
+
+            // Retrieve the format string that was passed as state 
+            // information.
+            string formatString = (string)ar.AsyncState;
+
+            // Call EndInvoke to retrieve the results.
+            IEnumerable<PortfolioDataEntity> trades = caller.EndInvoke(ar);
+
+            ProcessAllTrades(trades);
+
+            SubscribeMarketData();
+        }
+
+        public delegate IEnumerable<PortfolioDataEntity> GetAllTradesMethodCaller();
+        private IEnumerable<PortfolioDataEntity> GetAllTrades()
+        {
+            return _tradeDataMapper.GetAllTrades();
+        }
+
+        private void ProcessAllTrades(IEnumerable<PortfolioDataEntity> trades)
+        {
+            //IEnumerable<PortfolioDataEntity> trades = GetAllTrades();
+            foreach (var item in trades)
                 Save(item);
+        }
 
-            Update();
 
+
+        private void InitMarketDataQueue()
+        {
             _mktDataQueue = new AutoQueue<MarketDataEntity>(250); // TODO: get from config
             _mktDataQueue.signalEvent += new AutoQueueEventHandler<AutoQueue<MarketDataEntity>, IEnumerable<AutoQueue<MarketDataEntity>.GenericsEventArgs<MarketDataEntity>>>(OnSignalled);
             _mktDataQueue.Start();
@@ -86,10 +141,9 @@ namespace PortfolioManager
         /// <summary>
         /// called at startup to ensure view is updated
         /// </summary>
-        private void Update()
+        private void UpdateGUI()
         {
             _portfolioView.ShowPortfolioItems(_portfolioDao.GetAllPortfolioItems());
-            _portfolioView.UpdatePortfolioItems(); //TODO: might not be needed
 
             PortfolioAggregate p = _portfolioDao.GetPortfolioAggregate();
             _portfolioView.ShowPortfolioAggregate(p);
@@ -131,7 +185,9 @@ namespace PortfolioManager
 
             _mktDataAdapter.Subscribe(symbol);
 
-            return _tradeDataMapper.SaveTrade(symbol, shares, price);
+            _tradeDataMapper.SaveTradeAsync(symbol, shares, price);
+
+            return 0;
         } 
         #endregion
 

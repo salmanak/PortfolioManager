@@ -6,6 +6,7 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 using PortfolioManager.Common;
+using System.Threading;
 
 
 namespace PortfolioManager.Data
@@ -125,7 +126,56 @@ namespace PortfolioManager.Data
                 return -2;
             }
         }
-        
+
+
+        public void SaveTradeAsync(String symbol, long shares, double price)
+        {
+
+                _logger.Log("Saving Trade in DB.");
+
+                ThreadPool.QueueUserWorkItem(
+                    delegate
+                    {
+                        using (IDbConnection dbConnection = _dbConnection.CreateConnection())
+                        {
+                            try
+                            {
+                                dbConnection.Open();
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError("Error in opening DB Connection.", ex);
+                                //return -2;
+                            }
+                            using (IDbCommand cmd = dbConnection.CreateCommand())
+                            {
+                                try
+                                {
+                                    cmd.CommandText = "sp_InsertTrade";
+                                    cmd.CommandType = CommandType.StoredProcedure;
+
+                                    IDbDataParameter param;
+
+                                    //TODO: Refactor
+                                    param = cmd.CreateParameter(); param.ParameterName = "@Symbol"; param.Value = symbol; cmd.Parameters.Add(param);
+                                    param = cmd.CreateParameter(); param.ParameterName = "@Shares"; param.Value = shares; cmd.Parameters.Add(param);
+                                    param = cmd.CreateParameter(); param.ParameterName = "@Price"; param.Value = price; cmd.Parameters.Add(param);
+
+                                    cmd.ExecuteNonQuery();
+
+                                    //return 0;
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError("Unable to save trade in DB.", ex);
+                                    //return -2;
+                                }
+                            }       
+                        }
+                    });
+        }
+
         #endregion
     }
 }
+
