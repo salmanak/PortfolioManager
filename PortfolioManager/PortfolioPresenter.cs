@@ -58,8 +58,10 @@ namespace PortfolioManager
 
         private void SubscribeMarketData()
         {
-            foreach (var item in _portfolioDao.GetAllPortfolioItems())
-                _mktDataAdapter.Subscribe(item.Symbol);
+            _logger.LogDebug("SubscribeMarketData ");
+
+            _mktDataAdapter.SubscribeAll(_portfolioDao.GetAllPortfolioItems().Select(x => x.Symbol).ToList());
+
         }
 
         private AutoQueue<MarketDataEntity> _mktDataQueue;
@@ -98,13 +100,15 @@ namespace PortfolioManager
         // AsyncCallback delegate.
         void GetAllTradesComplete(IAsyncResult ar)
         {
+            _logger.LogDebug("GetAllTradesComplete ");
+
             // Retrieve the delegate.
             AsyncResult result = (AsyncResult)ar;
             GetAllTradesMethodCaller caller = (GetAllTradesMethodCaller)result.AsyncDelegate;
 
             // Retrieve the format string that was passed as state 
             // information.
-            string formatString = (string)ar.AsyncState;
+            //string formatString = (string)ar.AsyncState;
 
             // Call EndInvoke to retrieve the results.
             IEnumerable<PortfolioDataEntity> trades = caller.EndInvoke(ar);
@@ -144,7 +148,7 @@ namespace PortfolioManager
         private void UpdateGUI()
         {
             _portfolioView.ShowPortfolioItems(_portfolioDao.GetAllPortfolioItems());
-
+            
             PortfolioAggregate p = _portfolioDao.GetPortfolioAggregate();
             _portfolioView.ShowPortfolioAggregate(p);
 
@@ -198,16 +202,21 @@ namespace PortfolioManager
         /// <param name="mktData">market data that is received</param>
         public void OnMarketDataUpdate(MarketDataEntity mktData)
         {
+            _logger.LogDebug("OnMarketDataUpdate " + mktData.Symbol + mktData.LastPrice.ToString());
+
             _mktDataQueue.Enqueue(mktData);          
         }
 
         public void OnSignalled(AutoQueue<MarketDataEntity> q,  IEnumerable<AutoQueue<MarketDataEntity>.GenericsEventArgs<MarketDataEntity>> args) 
         {
-            foreach (AutoQueue<MarketDataEntity>.GenericsEventArgs<MarketDataEntity>item in args )
+            foreach (AutoQueue<MarketDataEntity>.GenericsEventArgs<MarketDataEntity> item in args)
             {
                 MarketDataEntity mktData = item.Item;
+
+                _logger.LogDebug("OnSignalled " + mktData.Symbol + mktData.LastPrice.ToString());
+
                 _portfolioDao.Save(mktData.Symbol, mktData);
-            }
+            }          
             
         }
         #endregion
