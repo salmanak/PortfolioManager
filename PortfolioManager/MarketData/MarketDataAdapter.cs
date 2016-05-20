@@ -6,6 +6,7 @@ using PortfolioManager.Data;
 using System.Threading;
 using System.Collections;
 using PortfolioManager.Common;
+using System.Collections.Concurrent;
 
 namespace PortfolioManager.MarketData
 {
@@ -19,7 +20,7 @@ namespace PortfolioManager.MarketData
         /// <summary>
         /// data structure to maintain the symbol based market data
         /// </summary>
-        private Dictionary<string, MarketDataEntity> _subscriptions;
+        private ConcurrentDictionary<string, MarketDataEntity> _subscriptions;
         #endregion
 
         #region Constructors
@@ -28,7 +29,7 @@ namespace PortfolioManager.MarketData
         /// </summary>
         public MarketDataAdapter()
         {
-            _subscriptions = new Dictionary<string, MarketDataEntity>();
+            _subscriptions = new ConcurrentDictionary<string, MarketDataEntity>();
 
             InitSimulation();
         }
@@ -55,20 +56,56 @@ namespace PortfolioManager.MarketData
                 return GetRandomNumber();
             }
         }
+
+        private void GetLastPrices(Dictionary<string,double> symbols)
+        {
+            MarketDataProvider.GetQuotes(symbols);
+
+            foreach (var kvp in symbols)
+            {
+                if (kvp.Value <= 0)
+                {
+                    _logger.Log("Generating Random Price : " + kvp.Key);
+                    // For Simulation
+                    symbols[kvp.Key] = GetRandomNumber();
+                }
+            }
+        }
+
         /// <summary>
         /// Add subscription in the data structure
         /// </summary>
         /// <param name="symbol">symbol to be subscribed</param>
         public override void Subscribe(string symbol)
         {
-            _logger.Log("Subscribing for _symbol : " + symbol);
+            _logger.Log("Subscribing for symbol : " + symbol);
 
-            lock (((IDictionary)_subscriptions).SyncRoot)
-            {
                 if (!_subscriptions.ContainsKey(symbol))
-                    _subscriptions.Add(symbol, new MarketDataEntity(symbol, GetLastPrice(symbol)));
+                    _subscriptions.TryAdd(symbol, new MarketDataEntity(symbol, GetLastPrice(symbol)));
+        }
+
+
+        public override void SubscribeAll(List<string> symbols)
+        {
+
+            if (symbols.Count <= 0)
+                return;
+
+            _logger.Log("Subscribing for _symbols : " + symbols.Count.ToString());
+
+            Dictionary<string, double> lastPrices = symbols.ToDictionary(x => x, x => (double)0);
+            GetLastPrices(lastPrices);
+
+            foreach (var kvp in lastPrices)
+            {
+                string symbol = kvp.Key;
+
+                if (!_subscriptions.ContainsKey(symbol))
+                    _subscriptions.TryAdd(symbol, new MarketDataEntity(symbol, kvp.Value));
+
             }
         }
+
         /// <summary>
         /// Remove subscription from the data structure
         /// </summary>
@@ -77,11 +114,11 @@ namespace PortfolioManager.MarketData
         {
             _logger.Log("UnSubscribing for _symbol : " + symbol);
 
-            lock (((IDictionary)_subscriptions).SyncRoot)
-            {
+            MarketDataEntity mkt;
+
                 if (_subscriptions.ContainsKey(symbol))
-                    _subscriptions.Remove(symbol);
-            }
+                    _subscriptions.TryRemove(symbol, out mkt);
+
 
         }
         #endregion
@@ -132,7 +169,9 @@ namespace PortfolioManager.MarketData
             _logger.Log("Starting simulator _thread.");
             while (_keepRunning)
             {
-                lock (((IDictionary)_subscriptions).SyncRoot)
+
+                
+                if (_subscriptions.Count > 0)
                 {
                     foreach (var kvp in _subscriptions)
                     {
@@ -149,12 +188,14 @@ namespace PortfolioManager.MarketData
                         else if (mkt.LastPrice >= 1000)
                             directionUp = false;
 
-                        mkt.LastPrice += (directionUp) ? 0.2 : -0.2;
+                        mkt.LastPrice += (directionUp) ? 0.3 : -0.3;
+
+                        _logger.LogDebug("ThreadFunc " + mkt.Symbol + mkt.LastPrice.ToString());
 
                         Notify(new MarketDataEntity(mkt));
                     }
                 }
-                Thread.Sleep(100); //TODO: Get from config
+                Thread.Sleep(250); //TODO: Get from config
             }
             _logger.Log("simulator _thread stopped.");
         }

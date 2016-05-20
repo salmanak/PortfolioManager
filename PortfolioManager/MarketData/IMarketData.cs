@@ -12,6 +12,7 @@ namespace PortfolioManager.MarketData
         abstract public void Start();
         abstract public void Stop();
         abstract public void Subscribe(string symbol);
+        abstract public void SubscribeAll(List<string> symbols);
         abstract public void UnSubscribe(string symbol);
     }
 }

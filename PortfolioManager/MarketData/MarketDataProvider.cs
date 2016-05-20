@@ -31,6 +31,8 @@ namespace PortfolioManager.MarketData
         /// <returns>returns the market data AS-IS. Need to make it loosely coupled</returns>
         private static RootObject_getQuote GetQuoteInternal(string symbol)
         {
+            _logger.LogDebug("GetQuoteInternal " + symbol);
+
             try
             {
                 //"http://marketdata.websol.barchart.com/getQuote.json?key=75dd0aebc8c6e5a9c8d1b9be02cf5ba9&symbols="
@@ -83,9 +85,10 @@ namespace PortfolioManager.MarketData
         /// <returns></returns>
         public static MarketDataEntity GetQuote(string symbol)
         {
+            _logger.LogDebug("GetQuote " + symbol);
             RootObject_getQuote q = GetQuoteInternal(symbol);
 
-            if (q != null)
+            if (q != null && q.results != null)
             {
                 if (q.results.Count > 0)
                 {
@@ -100,6 +103,88 @@ namespace PortfolioManager.MarketData
             return null;
         }
 
+        private static void GetQuotesInternal(Dictionary<string,Result_getQuote> symbols)
+        {
+            _logger.LogDebug("GetQuoteInternal " + symbols.Count.ToString());
+
+            try
+            {
+                //"http://marketdata.websol.barchart.com/getQuote.json?key=75dd0aebc8c6e5a9c8d1b9be02cf5ba9&symbols="
+                string url_getQuote = MarketDataSettings.GetConfiguration().URL;
+                if (string.IsNullOrEmpty(url_getQuote))
+                    return;
+                url_getQuote += "&symbols=";
+
+
+                string symbolsList = String.Join(",", symbols.Select(kv=>kv.Key.ToString()));
+                url_getQuote += symbolsList;
+
+
+
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url_getQuote);
+
+                string proxyAddress = MarketDataSettings.GetConfiguration().ProxyAddress;
+                if (!string.IsNullOrEmpty(proxyAddress))
+                {
+                    WebProxy proxyObj = new WebProxy(proxyAddress);
+                    proxyObj.Credentials = CredentialCache.DefaultCredentials;
+                    webRequest.Proxy = proxyObj;
+                }
+
+                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+
+                if ((webResponse.StatusCode == HttpStatusCode.OK))// && (webResponse.ContentLength > 0))
+                {
+                    StreamReader reader = new StreamReader(webResponse.GetResponseStream());
+                    string s = reader.ReadToEnd();
+
+                    var serializer = new JavaScriptSerializer();
+                    RootObject_getQuote arr = serializer.Deserialize<RootObject_getQuote>(s);
+
+                    if (arr != null && arr.results != null)
+                    {
+                        foreach (var item in arr.results)
+                        {
+                            symbols[item.symbol] = item;
+                        }
+                    }
+                    
+                    //TODO: Need to make it loosely coupled
+                    return;
+
+                }
+                else
+                {
+                    _logger.Log(string.Format("Status code == {0}, Content length == {1}", webResponse.StatusCode, webResponse.ContentLength));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unable to create Connection.", ex);
+            }
+            return;
+        }
+
+        public static void GetQuotes(Dictionary<string, double> symbols)
+        {
+            if (symbols.Count <= 0)
+                return;
+
+            Dictionary<string, Result_getQuote> outSymbols = symbols.Keys.ToDictionary(x => x, x => new Result_getQuote());
+
+            _logger.LogDebug("GetQuotes " + symbols.Count.ToString());
+
+            GetQuotesInternal(outSymbols);
+
+            foreach (var kvp in outSymbols)
+            {
+                Result_getQuote q = kvp.Value;
+                if (q != null)
+                {
+                    symbols[kvp.Key] = q.lastPrice;
+                }               
+            }
+        }
         #endregion
     }
 
