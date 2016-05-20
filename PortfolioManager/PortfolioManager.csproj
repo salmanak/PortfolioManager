@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AutoQueue.cs" />
+    <Compile Include="Common\IExceptionHandler.cs" />
     <Compile Include="Common\LoggingService.cs" />
     <Compile Include="Common\MarketDataSettings.cs" />
     <Compile Include="Common\ObservableObject.cs" />
