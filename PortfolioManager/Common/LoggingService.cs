@@ -11,6 +11,7 @@ namespace PortfolioManager.Common
     public interface ILogger
     {
         void Log(string message);
+        void LogDebug(string message);
         void LogError(string message, Exception ex = null);
     }
 
@@ -45,6 +46,11 @@ namespace PortfolioManager.Common
         #endregion
 
         #region Logging Methods
+        public void LogDebug(string message)
+        {
+            _logger.Debug(message);
+        }
+
         public void Log(string message)
         {
             _logger.Info(message);
