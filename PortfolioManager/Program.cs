@@ -28,8 +28,6 @@ namespace PortfolioManager
             PortfolioView view = new PortfolioView(dao,mktDataAdapter);
 
             Application.Run(view);
-
-            //Application.Run(new TestForm());
         }
     }
 }
