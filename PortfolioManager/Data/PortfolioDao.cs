@@ -82,8 +82,8 @@ namespace PortfolioManager.Data
             {
                 // Should not happen
             }
-
-            _portfolioAggregate.UnrealizedGainAggregate = _portfolioItems.Sum(s => s.UnrealizedGain);
+            
+            _portfolioAggregate.UnrealizedGainAggregate = Math.Round(_portfolioItems.Sum(s => s.UnrealizedGain), 2);
         }
 
         /// <summary>
@@ -108,20 +108,20 @@ namespace PortfolioManager.Data
 
                 result.Price = AvgPx;
                 result.Shares = CumQty;
-                result.Cost = CumQty * AvgPx;
+                result.Cost = Math.Round(CumQty * AvgPx,2);
 
-                result.MarketPrice = portfolio.MarketPrice;
-                result.MarketValue = portfolio.MarketValue;
-                result.UnrealizedGain = portfolio.UnrealizedGain;
+                result.MarketPrice = Math.Round(portfolio.MarketPrice,2);
+                result.MarketValue = Math.Round(portfolio.MarketValue,2);
+                result.UnrealizedGain = Math.Round(portfolio.UnrealizedGain,2);
             }
             else
             {
-                portfolio.Cost = portfolio.Shares * portfolio.Price;
+                portfolio.Cost = Math.Round(portfolio.Shares * portfolio.Price,2);
 
                 _portfolioItems.Add(portfolio);
             }
-
-            _portfolioAggregate.CostAggregate = _portfolioItems.Sum(s => s.Cost);
+            
+            _portfolioAggregate.CostAggregate = Math.Round(_portfolioItems.Sum(s => s.Cost),2);
         } 
         #endregion
 
