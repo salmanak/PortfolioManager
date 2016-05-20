@@ -24,17 +24,20 @@ namespace PortfolioManager.Data
         /// <summary>
         /// Database Connection object
         /// </summary>
-        private DatabaseConnection _dbConnection; 
+        private DatabaseConnection _dbConnection;
+
+        private IExceptionHandler _exceptionHandler;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public TradeDataMapper()
+        public TradeDataMapper(IExceptionHandler exceptionHandler)
         {
+            _exceptionHandler = exceptionHandler;
             _dbConnection = new DatabaseConnection();
-        } 
+        }
         #endregion
 
         #region Methods
@@ -46,133 +49,177 @@ namespace PortfolioManager.Data
         {
             _logger.Log("Getting Trades from DB.");
 
-            using (IDbConnection dbConnection = _dbConnection.CreateConnection())
+            string errorString = ""; // workaround as yield is not allowed within Try/Catch
+
+            using (IDbConnection dbConnection = _dbConnection.CreateConnection(_exceptionHandler))
             {
                 try
                 {
+                    errorString = "Error in opening DB Connection.";
                     dbConnection.Open();
+                    errorString = "";
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("Error in opening DB Connection.", ex);
+                    errorString = HandleException(errorString, ex);
                     yield break;
                 }
 
-                using (IDbCommand cmd = dbConnection.CreateCommand())
+
+                IDbCommand cmd = null;
+                IDataReader reader = null;
+
+                try
                 {
-                    cmd.CommandText = "sp_GetTrades";
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    using (IDataReader reader = cmd.ExecuteReader())
+                    try
                     {
-                        while (reader.Read())
-                        {
-                            var trades = new PortfolioDataEntity();
-
-                            trades.Symbol = reader["Symbol"].ToString();
-                            trades.Shares = long.Parse(reader["Shares"].ToString());
-                            trades.Price = Math.Round(double.Parse(reader["Price"].ToString()), 2);
-
-                            yield return trades;
-                        }
+                        errorString = "Error is creating database command.";
+                        cmd = dbConnection.CreateCommand();
+                        cmd.CommandText = "sp_GetTrades";
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        errorString = "";
                     }
+                    catch (SqlException SqlEx)
+                    {
+                        errorString = HandleException(errorString, SqlEx);
+                        yield break;
+                    }
+                    catch (Exception ex)
+                    {
+                        errorString = HandleException(errorString, ex);
+                        yield break;
+                    }
+
+                    try
+                    {
+                        errorString = "Unable to get Trades from the DB.";
+                        reader = cmd.ExecuteReader();
+                        errorString = "";
+                    }
+                    catch (SqlException SqlEx)
+                    {
+                        errorString = HandleException(errorString, SqlEx);
+                        yield break;
+                    }
+                    catch (Exception ex)
+                    {
+                        errorString = HandleException(errorString, ex);
+                        yield break;
+                    }
+
+                    errorString = "Unable to read trades from DB.";
+                    while (reader.Read())
+                    {
+                        var trades = new PortfolioDataEntity();
+
+                        trades.Symbol = reader["Symbol"].ToString();
+                        trades.Shares = long.Parse(reader["Shares"].ToString());
+                        trades.Price = Math.Round(double.Parse(reader["Price"].ToString()), 2);
+
+                        yield return trades;
+                    }
+                    errorString = "";
+                }
+                finally // workaround as yield is not allowed within Try/Catch
+                {
+                    if (cmd != null)
+                        cmd.Dispose();
+                    if (reader != null && !reader.IsClosed)
+                        reader.Close();
+
+                    if ( !string.IsNullOrEmpty(errorString) )
+                        _exceptionHandler.HandleException(new Exception(errorString)); // To let user know about the exception
                 }
             }
         }
+
+
         /// <summary>
-        /// Saves the Trade in the database
+        /// Saves the Trade in the database Asynchronously
         /// </summary>
         /// <param name="symbol">symbol for the trade</param>
         /// <param name="shares">shares for the trade</param>
         /// <param name="price">price for the trade</param>
-        /// <returns> (0) Success (-1) DB Error (-2) Db Connection Open error</returns>
-        public int SaveTrade(String symbol, long shares, double price)
-        {
-            try
-            {
-                _logger.Log("Saving Trade in DB.");
-
-                using (IDbConnection dbConnection = _dbConnection.CreateConnection())
-                {
-                    try
-                    {
-                        dbConnection.Open();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError("Error in opening DB Connection.", ex);
-                        return -2;
-                    }
-                    using (IDbCommand cmd = dbConnection.CreateCommand())
-                    {
-                        cmd.CommandText = "sp_InsertTrade";
-                        cmd.CommandType = CommandType.StoredProcedure;
-
-                        IDbDataParameter param;
-
-                        //TODO: Refactor
-                        param = cmd.CreateParameter(); param.ParameterName = "@Symbol"; param.Value = symbol; cmd.Parameters.Add(param);
-                        param = cmd.CreateParameter(); param.ParameterName = "@Shares"; param.Value = shares; cmd.Parameters.Add(param);
-                        param = cmd.CreateParameter(); param.ParameterName = "@Price"; param.Value = price; cmd.Parameters.Add(param);
-
-                        cmd.ExecuteNonQuery();
-
-                        return 0;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Unable to save trade in DB.", ex);
-                return -2;
-            }
-        }
-
-
+        /// <returns> Passes the exception/error upstream to be shown to the user</returns>
         public void SaveTradeAsync(String symbol, long shares, double price)
         {
+            _logger.Log("Saving Trade in DB.");
 
-                _logger.Log("Saving Trade in DB.");
-
-                ThreadPool.QueueUserWorkItem(
-                    delegate
+            ThreadPool.QueueUserWorkItem(
+                delegate
+                {                    
+                    using (IDbConnection dbConnection = _dbConnection.CreateConnection(_exceptionHandler))
                     {
-                        using (IDbConnection dbConnection = _dbConnection.CreateConnection())
+                        try
                         {
-                            try
-                            {
-                                dbConnection.Open();
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError("Error in opening DB Connection.", ex);
-                                //return -2;
-                            }
+                            dbConnection.Open();
+                        }
+                        catch (Exception ex)
+                        {
+                            string errorString = "Error in opening DB Connection.";
+                            errorString = HandleException(errorString, ex);
+
+                            return;
+                        }
+
+
+                        try
+                        {
                             using (IDbCommand cmd = dbConnection.CreateCommand())
                             {
-                                try
-                                {
-                                    cmd.CommandText = "sp_InsertTrade";
-                                    cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.CommandText = "sp_InsertTrade";
+                                cmd.CommandType = CommandType.StoredProcedure;
 
-                                    IDbDataParameter param;
+                                AddParameter(cmd, "@Symbol", symbol);
+                                AddParameter(cmd, "@Shares", shares);
+                                AddParameter(cmd, "@Price", price);
 
-                                    //TODO: Refactor
-                                    param = cmd.CreateParameter(); param.ParameterName = "@Symbol"; param.Value = symbol; cmd.Parameters.Add(param);
-                                    param = cmd.CreateParameter(); param.ParameterName = "@Shares"; param.Value = shares; cmd.Parameters.Add(param);
-                                    param = cmd.CreateParameter(); param.ParameterName = "@Price"; param.Value = price; cmd.Parameters.Add(param);
 
-                                    cmd.ExecuteNonQuery();
+                                cmd.ExecuteNonQuery();
 
-                                    //return 0;
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.LogError("Unable to save trade in DB.", ex);
-                                    //return -2;
-                                }
-                            }       
+                                return; //Successful
+
+                            }
                         }
-                    });
+                        catch (SqlException SqlEx)
+                        {
+                            String errorString = "Unable to save trade in DB for symbol " + symbol;
+                            errorString = HandleException(errorString, SqlEx);
+                            return;
+                        }
+                        catch (Exception ex)
+                        {
+                            String errorString = "Unable to save trade in DB for symbol " + symbol;
+                            errorString = HandleException(errorString, ex);
+                            return;
+                        }
+                    }
+                });
+        }
+
+        private string HandleException(string errorString, Exception ex)
+        {
+            _logger.LogError(errorString, ex);
+            _exceptionHandler.HandleException(new Exception(errorString, ex)); // To let user know about the exception
+            return "";
+        }
+
+        private string HandleException(string errorString, SqlException SqlEx)
+        {
+            _logger.LogError("Errors Count:" + SqlEx.Errors.Count.ToString());
+            foreach (SqlError error in SqlEx.Errors)
+                _logger.LogError(error.Number + " - " + error.Message);
+            _exceptionHandler.HandleException(new Exception(errorString, SqlEx)); // To let user know about the exception
+            return "";
+        }
+
+        private static void AddParameter<T>(IDbCommand cmd, string paramName, T paramValue)
+        {
+            IDbDataParameter param;
+            param = cmd.CreateParameter();
+            param.ParameterName = paramName;
+            param.Value = paramValue;
+            cmd.Parameters.Add(param);
         }
 
         #endregion

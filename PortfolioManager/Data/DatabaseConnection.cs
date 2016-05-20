@@ -27,7 +27,7 @@ namespace PortfolioManager.Data
         /// Creates a connection based on teh configuration
         /// </summary>
         /// <returns>returns the database connection object</returns>
-        public IDbConnection CreateConnection()
+        public IDbConnection CreateConnection(IExceptionHandler exceptionHandler = null)
         {
             try
             {
@@ -40,7 +40,9 @@ namespace PortfolioManager.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unable to create Connection.", ex);
+                string errorString = "Unable to create Connection.";
+                _logger.LogError(errorString, ex);
+                exceptionHandler.HandleException(new Exception(errorString, ex));
                 return null;
             }
         } 

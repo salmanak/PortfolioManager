@@ -15,7 +15,7 @@ namespace PortfolioManager
     /// The Presenter class that controls the View and Model.
     /// This also controls the Market Data Access.
     /// </summary>
-    internal class PortfolioPresenter
+    internal class PortfolioPresenter : IExceptionHandler
     {
         #region Declarations and Definitions
         /// <summary>
@@ -78,7 +78,7 @@ namespace PortfolioManager
         {
             _portfolioView = view;
             _portfolioDao = dao;
-            _tradeDataMapper = new TradeDataMapper();
+            _tradeDataMapper = new TradeDataMapper(this);
 
             UpdateGUI();
 
@@ -220,7 +220,10 @@ namespace PortfolioManager
             
         }
         #endregion
-
-
+        
+        public void HandleException(Exception ex)
+        {
+            ((IExceptionHandler)_portfolioView).HandleException(ex);
+        }
     }
 }

@@ -13,7 +13,7 @@ using PortfolioManager.Data;
 
 namespace PortfolioManager.View
 {
-    public partial class PortfolioView : Form, IPortfolioView
+    public partial class PortfolioView : Form, IPortfolioView, IExceptionHandler
     {
         #region Declarations and Definitions
         /// <summary>
@@ -201,5 +201,19 @@ namespace PortfolioManager.View
         } 
         #endregion
 
+
+
+        private delegate void OnExceptionHandle(Exception ex);
+        public void HandleException(Exception ex)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new OnExceptionHandle(HandleException), new object[] { ex });
+            }
+            else
+            {
+                MessageBox.Show(this, ex.Message, "ERROR");
+            }
+        }
     }
 }
