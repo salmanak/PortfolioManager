@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PortfolioManager.Common
 {
-    public abstract class ObservableObject<T>
+    public abstract class ObservableObject<T> : IObservableObject<T>
     {
         public delegate void NotifyObserver(T item);
         public event NotifyObserver NotifyObserverEvent;
