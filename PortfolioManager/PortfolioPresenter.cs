@@ -38,27 +38,6 @@ namespace PortfolioManager
 
         private IServiceClient _serviceClient;
 
-        /// <summary>
-        /// Market Data Adapter to access market data
-        /// </summary>
-        //private IMarketDataAdapter<MarketDataEntity> _mktDataAdapter;
-        /// <summary>
-        /// setter injection for Market Data Adapter
-        /// </summary>
-        //public IMarketDataAdapter<MarketDataEntity> MarketDataAdapter
-        //{
-        //    //get { return _mktDataAdapter; }
-        //    set
-        //    {
-        //        _mktDataAdapter = value;
-
-        //        _mktDataAdapter.AddObserver(new ObservableObject<MarketDataEntity>.NotifyObserver(this.OnMarketDataUpdate));
-
-        //        SubscribeMarketData();
-
-        //        _mktDataAdapter.Connect();
-        //    }
-        //}
 
         private void SubscribeMarketData()
         {
@@ -84,54 +63,40 @@ namespace PortfolioManager
             _portfolioDao = dao;
             _tradeDataMapper = new TradeDataMapper(this);
 
-            _serviceClient = ServiceClientCreator.FactoryMethod();
-            _serviceClient.RegisterCallBack(this.OnServiceClientSimulatorCallBack);
-
             UpdateGUI();
 
-            //ProcessAllTrades(GetAllTrades());
+            GetDataFromDB();
 
-            GetAllTradesMethodCaller caller = new GetAllTradesMethodCaller(this.GetAllTrades);
-            IAsyncResult result = caller.BeginInvoke(new AsyncCallback(GetAllTradesComplete),"The call executed on thread {0}, with return value \"{1}\".");
+            InitMarketData();
+        }
 
+        private void GetDataFromDB()
+        {
+            var task = Task.Factory.StartNew(() => GetAllTrades());
+            task.ContinueWith(t => GetAllTradesComplete(t.Result));
+        }
 
-            //var task = Task.Factory.StartNew(() => ProcessAllTrades());
-            //task.Wait();
-            ////GetAllTrades();
-            
+        private void InitMarketData()
+        {
+            _serviceClient = ServiceClientCreator.FactoryMethod();
+            _serviceClient.RegisterCallBack(this.OnServiceClientSimulatorCallBack);
             InitMarketDataQueue();
-
             SubscribeMarketData();
             _serviceClient.Connect();
         }
 
+        private IEnumerable<PortfolioDataEntity> GetAllTrades()
+        {
+            return _tradeDataMapper.GetAllTrades();
+        }
 
-        // The callback method must have the same signature as the
-        // AsyncCallback delegate.
-        void GetAllTradesComplete(IAsyncResult ar)
+        void GetAllTradesComplete(IEnumerable<PortfolioDataEntity> trades)
         {
             _logger.LogDebug("GetAllTradesComplete ");
-
-            // Retrieve the delegate.
-            AsyncResult result = (AsyncResult)ar;
-            GetAllTradesMethodCaller caller = (GetAllTradesMethodCaller)result.AsyncDelegate;
-
-            // Retrieve the format string that was passed as state 
-            // information.
-            //string formatString = (string)ar.AsyncState;
-
-            // Call EndInvoke to retrieve the results.
-            IEnumerable<PortfolioDataEntity> trades = caller.EndInvoke(ar);
 
             ProcessAllTrades(trades);
 
             SubscribeMarketData();
-        }
-
-        public delegate IEnumerable<PortfolioDataEntity> GetAllTradesMethodCaller();
-        private IEnumerable<PortfolioDataEntity> GetAllTrades()
-        {
-            return _tradeDataMapper.GetAllTrades();
         }
 
         private void ProcessAllTrades(IEnumerable<PortfolioDataEntity> trades)
