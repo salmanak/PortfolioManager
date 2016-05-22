@@ -2,38 +2,50 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Concurrent;
+using PortfolioManager.Common;
 using PortfolioManager.Data;
 using System.Threading;
-using System.Collections;
-using PortfolioManager.Common;
-using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
-namespace PortfolioManager.MarketData
+namespace PortfolioManager.MarketData.ServiceClients
 {
-    class MarketDataAdapter:IMarketData
+    public class ServiceClientSimulator
     {
+        
         #region Declarations and Definitions
         /// <summary>
         /// For Logging
         /// </summary>
-        private ILogger _logger = new LoggingService(typeof(MarketDataAdapter));
+        private ILogger _logger = new LoggingService(typeof(ServiceClientSimulator));
         /// <summary>
         /// data structure to maintain the symbol based market data
         /// </summary>
-        private ConcurrentDictionary<string, MarketDataEntity> _subscriptions;
+        private ConcurrentDictionary<string, MarketDataEntity> _subscriptions = new ConcurrentDictionary<string, MarketDataEntity>();
+
+        public delegate void ServiceClientSimulatorCallBack(MarketDataEntity mktData);
+        private ServiceClientSimulatorCallBack _callBackDelegate;
+
+        private IServiceClient _serviceClient;
+        public IServiceClient ServiceClient
+        {
+            set { _serviceClient = value; }
+        }
+
         #endregion
 
-        #region Constructors
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public MarketDataAdapter()
-        {
-            _subscriptions = new ConcurrentDictionary<string, MarketDataEntity>();
 
+        public ServiceClientSimulator()
+        {
             InitSimulation();
         }
-        #endregion
+
+
+        public void RegisterCallBack(ServiceClientSimulatorCallBack callBack)
+        {
+            _callBackDelegate = callBack;
+        }
+
 
         #region Methods
         /// <summary>
@@ -43,7 +55,7 @@ namespace PortfolioManager.MarketData
         /// <returns>Last Price of the symbol</returns>
         private double GetLastPrice(string symbol)
         {
-            MarketDataEntity mktData = MarketDataProvider.GetQuote(symbol);
+            MarketDataEntity mktData = _serviceClient.GetQuote(symbol);
 
             if (mktData != null)
             {
@@ -57,9 +69,9 @@ namespace PortfolioManager.MarketData
             }
         }
 
-        private void GetLastPrices(Dictionary<string,double> symbols)
+        private void GetLastPrices(Dictionary<string, double> symbols)
         {
-            MarketDataProvider.GetQuotes(symbols);
+            _serviceClient.GetQuotes(symbols);
 
             foreach (var kvp in symbols)
             {
@@ -76,16 +88,19 @@ namespace PortfolioManager.MarketData
         /// Add subscription in the data structure
         /// </summary>
         /// <param name="symbol">symbol to be subscribed</param>
-        public override void Subscribe(string symbol)
+        public void Subscribe(string symbol)
         {
+
             _logger.Log("Subscribing for symbol : " + symbol);
 
-                if (!_subscriptions.ContainsKey(symbol))
-                    _subscriptions.TryAdd(symbol, new MarketDataEntity(symbol, GetLastPrice(symbol)));
+            double lastPrice = GetLastPrice(symbol);
+
+            if (!_subscriptions.ContainsKey(symbol))
+                _subscriptions.TryAdd(symbol, new MarketDataEntity(symbol, lastPrice));
         }
 
 
-        public override void SubscribeAll(List<string> symbols)
+        public void SubscribeAll(List<string> symbols)
         {
 
             if (symbols.Count <= 0)
@@ -110,28 +125,25 @@ namespace PortfolioManager.MarketData
         /// Remove subscription from the data structure
         /// </summary>
         /// <param name="symbol">symbol to be un subscribed</param>
-        public override void UnSubscribe(string symbol)
+        public void UnSubscribe(string symbol)
         {
             _logger.Log("UnSubscribing for _symbol : " + symbol);
 
             MarketDataEntity mkt;
 
-                if (_subscriptions.ContainsKey(symbol))
-                    _subscriptions.TryRemove(symbol, out mkt);
+            if (_subscriptions.ContainsKey(symbol))
+                _subscriptions.TryRemove(symbol, out mkt);
 
 
         }
         #endregion
 
         #region For Simulation
-        /// <summary>
-        /// For Simulation
-        /// </summary>
-        private Thread _thread;
-        /// <summary>
-        /// For Simulation
-        /// </summary>
-        private bool _keepRunning;
+        private Task _task;
+        private CancellationTokenSource _tokenSource;
+        private CancellationToken _token;
+
+
         /// <summary>
         /// For Simulation
         /// </summary>
@@ -142,35 +154,63 @@ namespace PortfolioManager.MarketData
         private void InitSimulation()
         {
             _rand = new Random();
-            _keepRunning = true;
-            _thread = new Thread(ThreadFunc);
+
+            _tokenSource = new CancellationTokenSource();
+            _token = _tokenSource.Token;            
         }
         /// <summary>
         /// For Simulation
         /// </summary>
-        public override void Start()
+        public void Connect()
         {
-            _keepRunning = true;
-            _thread.Start();
+            _task = Task.Factory.StartNew(() => ThreadFunc(_token), _token);
         }
         /// <summary>
         /// For Simulation
         /// </summary>
-        public override void Stop()
+        public void Disconnect()
         {
-            _keepRunning = false;
+            _tokenSource.Cancel();
+
+            try
+            {
+                _task.Wait();
+            }
+            catch (AggregateException e)
+            {
+                _logger.Log("AggregateException thrown with the following inner exceptions:");
+                // Display information about each exception. 
+                foreach (var v in e.InnerExceptions)
+                {
+                    if (v is TaskCanceledException)
+                        _logger.Log(string.Format( "TaskCanceledException: Task {0}", ((TaskCanceledException)v).Task.Id));
+                    else
+                        _logger.Log(string.Format("   Exception: {0}", v.GetType().Name));
+                }
+            }
+            finally
+            {
+                _tokenSource.Dispose();
+            }
+
         }
         /// <summary>
         /// For Simulation
         /// </summary>
-        public void ThreadFunc()
+        public void ThreadFunc(CancellationToken ct)
         {
             //For Simulation
             _logger.Log("Starting simulator _thread.");
-            while (_keepRunning)
-            {
 
-                
+            // Was cancellation already requested? 
+            if (ct.IsCancellationRequested == true)
+            {
+                _logger.Log("Task was cancelled before it got started.");
+                ct.ThrowIfCancellationRequested();
+            } 
+
+            while (true)
+            {
                 if (_subscriptions.Count > 0)
                 {
                     foreach (var kvp in _subscriptions)
@@ -179,23 +219,31 @@ namespace PortfolioManager.MarketData
                         double tmp = _rand.NextDouble();
                         bool directionUp = (tmp > 0.5);
 
-                        MarketDataEntity mkt = (MarketDataEntity)kvp.Value;
-                        if (mkt.LastPrice <= 0)
-                            mkt.LastPrice = GetRandomNumber();
+                        MarketDataEntity mktData = (MarketDataEntity)kvp.Value;
+                        if (mktData.LastPrice <= 0)
+                            mktData.LastPrice = GetRandomNumber();
 
-                        if (mkt.LastPrice <= 1) // Bottom or Top Value
+                        if (mktData.LastPrice <= 1) // Bottom or Top Value
                             directionUp = true;
-                        else if (mkt.LastPrice >= 1000)
+                        else if (mktData.LastPrice >= 1000)
                             directionUp = false;
 
-                        mkt.LastPrice += (directionUp) ? 0.3 : -0.3;
+                        mktData.LastPrice += (directionUp) ? 0.3 : -0.3;
 
-                        _logger.LogDebug("ThreadFunc " + mkt.Symbol + mkt.LastPrice.ToString());
+                        _logger.LogDebug("ThreadFunc " + mktData.Symbol + mktData.LastPrice.ToString());
 
-                        Notify(new MarketDataEntity(mkt));
+                        _callBackDelegate(mktData);
+                        //Notify(new MarketDataEntity(mkt));
                     }
                 }
                 Thread.Sleep(250); //TODO: Get from config
+
+                // Was cancellation already requested? 
+                if (ct.IsCancellationRequested == true)
+                {
+                    _logger.Log("Task was cancelled.");
+                    ct.ThrowIfCancellationRequested();
+                } 
             }
             _logger.Log("simulator _thread stopped.");
         }
@@ -214,7 +262,5 @@ namespace PortfolioManager.MarketData
             return _rand.NextDouble() * (maximum - minimum) + minimum;
         }
         #endregion
-
-
     }
 }

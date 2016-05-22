@@ -54,15 +54,24 @@
   <ItemGroup>
     <Compile Include="Common\AutoQueue.cs" />
     <Compile Include="Common\IExceptionHandler.cs" />
+    <Compile Include="Common\ILogger.cs" />
+    <Compile Include="Common\IObservableObject.cs" />
     <Compile Include="Common\LoggingService.cs" />
     <Compile Include="Common\MarketDataSettings.cs" />
     <Compile Include="Common\ObservableObject.cs" />
+    <Compile Include="Common\Utility.cs" />
     <Compile Include="Data\DatabaseConnection.cs" />
     <Compile Include="Data\MarketDataEntity.cs" />
     <Compile Include="Data\TradeDataMapper.cs" />
-    <Compile Include="MarketData\IMarketData.cs" />
-    <Compile Include="MarketData\MarketDataAdapter.cs" />
-    <Compile Include="MarketData\MarketDataProvider.cs" />
+    <Compile Include="MarketData\ServiceClientCreator.cs" />
+    <Compile Include="MarketData\ServiceClients\Barchart\BarchartClient.cs" />
+    <Compile Include="MarketData\IServiceClient.cs" />
+    <Compile Include="MarketData\ServiceClients\Barchart\ObjectModel\Result_getQuote.cs" />
+    <Compile Include="MarketData\ServiceClients\Barchart\ObjectModel\RootObject_getQuote.cs" />
+    <Compile Include="MarketData\ServiceClients\Barchart\ObjectModel\Status.cs" />
+    <Compile Include="MarketData\ServiceClientSimulator.cs" />
+    <Compile Include="MarketData\ServiceClients\Yahoo\ObjectModel\Quote.cs" />
+    <Compile Include="MarketData\ServiceClients\Yahoo\YahooClient.cs" />
     <Compile Include="View\BindingSourceEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -112,6 +121,7 @@
   <ItemGroup>
     <None Include="Script\PortfolioManager.sql" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

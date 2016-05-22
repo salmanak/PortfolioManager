@@ -7,40 +7,47 @@ using System.IO;
 using System.Web.Script.Serialization;
 using PortfolioManager.Common;
 using PortfolioManager.Data;
+using PortfolioManager.MarketData.ServiceClients.Barchart.ObjectModel;
 
-namespace PortfolioManager.MarketData
+namespace PortfolioManager.MarketData.ServiceClients.Barchart
 {
-    /// <summary>
-    /// Concrete class to represent the external market data provider
-    /// in this case connects to BarChart OnDemand REST API
-    /// </summary>
-    class MarketDataProvider
+    public class BarchartClient:ServiceClientSimulator, IServiceClient
     {
+
         #region Declarations and Definitions
         /// <summary>
         /// For Logging
         /// </summary>
-        private static ILogger _logger = new LoggingService(typeof(MarketDataProvider));  
+        private static ILogger _logger = new LoggingService(typeof(BarchartClient));
         #endregion
 
-        #region Methods
+        #region Constructor
+        public BarchartClient()
+        {
+            base.ServiceClient = this;
+        }
+        #endregion
+
+        #region Internal Methods
         /// <summary>
         /// Gets Quote from external market data provider
         /// </summary>
         /// <param name="symbol"></param>
         /// <returns>returns the market data AS-IS. Need to make it loosely coupled</returns>
-        private static RootObject_getQuote GetQuoteInternal(string symbol)
+        private  RootObject_getQuote GetQuoteInternal(string symbol)
         {
             _logger.LogDebug("GetQuoteInternal " + symbol);
 
             try
             {
                 //"http://marketdata.websol.barchart.com/getQuote.json?key=75dd0aebc8c6e5a9c8d1b9be02cf5ba9&symbols="
-                string url_getQuote = MarketDataSettings.GetConfiguration().URL;
+                string url_getQuote = MarketDataSettings.GetConfiguration().URLPrefix;
                 if (string.IsNullOrEmpty(url_getQuote))
                     return null;
-                url_getQuote += "&symbols=";
+                //url_getQuote += "&symbols=";
                 url_getQuote += symbol;
+                url_getQuote += MarketDataSettings.GetConfiguration().URLPostfix;
+
 
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url_getQuote);
 
@@ -83,7 +90,7 @@ namespace PortfolioManager.MarketData
         /// </summary>
         /// <param name="symbol"></param>
         /// <returns></returns>
-        public static MarketDataEntity GetQuote(string symbol)
+        public  MarketDataEntity GetQuote(string symbol)
         {
             _logger.LogDebug("GetQuote " + symbol);
             RootObject_getQuote q = GetQuoteInternal(symbol);
@@ -102,22 +109,26 @@ namespace PortfolioManager.MarketData
             _logger.LogError("Unable to process the Quote Response.");
             return null;
         }
+        #endregion
 
-        private static void GetQuotesInternal(Dictionary<string,Result_getQuote> symbols)
+        #region Interface Methods
+        private  void GetQuotesInternal(Dictionary<string, Result_getQuote> symbols)
         {
             _logger.LogDebug("GetQuoteInternal " + symbols.Count.ToString());
 
             try
             {
                 //"http://marketdata.websol.barchart.com/getQuote.json?key=75dd0aebc8c6e5a9c8d1b9be02cf5ba9&symbols="
-                string url_getQuote = MarketDataSettings.GetConfiguration().URL;
+                string url_getQuote = MarketDataSettings.GetConfiguration().URLPrefix;
                 if (string.IsNullOrEmpty(url_getQuote))
                     return;
-                url_getQuote += "&symbols=";
+                //url_getQuote += "&symbols=";
 
 
-                string symbolsList = String.Join(",", symbols.Select(kv=>kv.Key.ToString()));
+                string symbolsList = String.Join(MarketDataSettings.GetConfiguration().SymbolsSeparator, symbols.Select(kv => kv.Key.ToString()));
                 url_getQuote += symbolsList;
+
+                url_getQuote += MarketDataSettings.GetConfiguration().URLPostfix;
 
 
 
@@ -148,7 +159,7 @@ namespace PortfolioManager.MarketData
                             symbols[item.symbol] = item;
                         }
                     }
-                    
+
                     //TODO: Need to make it loosely coupled
                     return;
 
@@ -165,7 +176,7 @@ namespace PortfolioManager.MarketData
             return;
         }
 
-        public static void GetQuotes(Dictionary<string, double> symbols)
+        public  void GetQuotes(Dictionary<string, double> symbols)
         {
             if (symbols.Count <= 0)
                 return;
@@ -182,49 +193,9 @@ namespace PortfolioManager.MarketData
                 if (q != null)
                 {
                     symbols[kvp.Key] = q.lastPrice;
-                }               
+                }
             }
         }
         #endregion
     }
-
-    #region REST/JSON Objects
-    //
-    // Classes generated using 
-    // http://json2csharp.com/
-    //
-    public class Status
-    {
-        public int code { get; set; }
-        public string message { get; set; }
-    }
-
-    public class Result_getQuote
-    {
-        public string symbol { get; set; }
-        public string exchange { get; set; }
-        public string name { get; set; }
-        public string dayCode { get; set; }
-        public string serverTimestamp { get; set; }
-        public string mode { get; set; }
-        public double lastPrice { get; set; }
-        public string tradeTimestamp { get; set; }
-        public double netChange { get; set; }
-        public double percentChange { get; set; }
-        public string unitCode { get; set; }
-        public double open { get; set; }
-        public double high { get; set; }
-        public double low { get; set; }
-        public object close { get; set; }
-        public string flag { get; set; }
-        public int volume { get; set; }
-    }
-
-    public class RootObject_getQuote
-    {
-        public Status status { get; set; }
-        public List<Result_getQuote> results { get; set; }
-    } 
-    #endregion
-
 }

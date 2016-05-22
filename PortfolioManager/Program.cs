@@ -23,9 +23,9 @@ namespace PortfolioManager
             LoggingService.Init();
 
             IPortfolioDao dao = new PortfolioDao();
-            IMarketData mktDataAdapter = new MarketDataAdapter();
+            //IMarketDataAdapter<MarketDataEntity> mktDataAdapter = new MarketDataAdapter();
 
-            PortfolioView view = new PortfolioView(dao,mktDataAdapter);
+            PortfolioView view = new PortfolioView(dao);//,mktDataAdapter);
 
             Application.Run(view);
         }

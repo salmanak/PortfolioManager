@@ -8,6 +8,7 @@ using PortfolioManager.Data;
 using PortfolioManager.View;
 using System.Threading.Tasks;
 using System.Runtime.Remoting.Messaging;
+using PortfolioManager.MarketData.ServiceClients;
 
 namespace PortfolioManager
 {
@@ -34,33 +35,36 @@ namespace PortfolioManager
         /// Portfolio Model component to access underlying data
         /// </summary>
         private readonly IPortfolioDao _portfolioDao;
+
+        private IServiceClient _serviceClient;
+
         /// <summary>
         /// Market Data Adapter to access market data
         /// </summary>
-        private IMarketData _mktDataAdapter;
+        //private IMarketDataAdapter<MarketDataEntity> _mktDataAdapter;
         /// <summary>
         /// setter injection for Market Data Adapter
         /// </summary>
-        public IMarketData MarketDataAdapter
-        {
-            //get { return _mktDataAdapter; }
-            set
-            {
-                _mktDataAdapter = value;
+        //public IMarketDataAdapter<MarketDataEntity> MarketDataAdapter
+        //{
+        //    //get { return _mktDataAdapter; }
+        //    set
+        //    {
+        //        _mktDataAdapter = value;
 
-                _mktDataAdapter.AddObserver(new ObservableObject<MarketDataEntity>.NotifyObserver(this.OnMarketDataUpdate));
+        //        _mktDataAdapter.AddObserver(new ObservableObject<MarketDataEntity>.NotifyObserver(this.OnMarketDataUpdate));
 
-                SubscribeMarketData();
+        //        SubscribeMarketData();
 
-                _mktDataAdapter.Start();
-            }
-        }
+        //        _mktDataAdapter.Connect();
+        //    }
+        //}
 
         private void SubscribeMarketData()
         {
             _logger.LogDebug("SubscribeMarketData ");
 
-            _mktDataAdapter.SubscribeAll(_portfolioDao.GetAllPortfolioItems().Select(x => x.Symbol).ToList());
+            _serviceClient.SubscribeAll(_portfolioDao.GetAllPortfolioItems().Select(x => x.Symbol).ToList());
 
         }
 
@@ -80,6 +84,9 @@ namespace PortfolioManager
             _portfolioDao = dao;
             _tradeDataMapper = new TradeDataMapper(this);
 
+            _serviceClient = ServiceClientCreator.FactoryMethod();
+            _serviceClient.RegisterCallBack(this.OnServiceClientSimulatorCallBack);
+
             UpdateGUI();
 
             //ProcessAllTrades(GetAllTrades());
@@ -93,6 +100,9 @@ namespace PortfolioManager
             ////GetAllTrades();
             
             InitMarketDataQueue();
+
+            SubscribeMarketData();
+            _serviceClient.Connect();
         }
 
 
@@ -169,7 +179,7 @@ namespace PortfolioManager
         public void Close()
         {
             _mktDataQueue.Stop();
-            _mktDataAdapter.Stop();
+            _serviceClient.Disconnect();
         } 
         #endregion
 
@@ -187,7 +197,7 @@ namespace PortfolioManager
 
             _portfolioView.UpdatePortfolioItems();
 
-            _mktDataAdapter.Subscribe(symbol);
+            _serviceClient.Subscribe(symbol);
 
             _tradeDataMapper.SaveTradeAsync(symbol, shares, price);
 
@@ -196,6 +206,12 @@ namespace PortfolioManager
         #endregion
 
         #region Events
+
+        public void OnServiceClientSimulatorCallBack(MarketDataEntity mktData)
+        {
+            OnMarketDataUpdate(mktData);
+        }
+
         /// <summary>
         /// Invoked when market data update is received
         /// </summary>

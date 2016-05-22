@@ -63,11 +63,11 @@ namespace PortfolioManager.View
         /// </summary>
         /// <param name="dao">Model</param>
         /// <param name="mktDataAdapter">Market Data</param>
-        public PortfolioView(IPortfolioDao dao, IMarketData mktDataAdapter)
+        public PortfolioView(IPortfolioDao dao)//, IMarketDataAdapter<MarketDataEntity> mktDataAdapter)
             : this()
         {
             _presenter = new PortfolioPresenter(this, dao);
-            _presenter.MarketDataAdapter = mktDataAdapter;
+            //_presenter.MarketDataAdapter = mktDataAdapter;
         } 
         #endregion
 
@@ -182,22 +182,14 @@ namespace PortfolioManager.View
         private void txtPrice_Validating(object sender, CancelEventArgs e)
         {
 
-            double numberEntered;
+            double numberEntered = Utility.GetDouble(txtPrice.Text);
 
-            if (double.TryParse(txtPrice.Text, out numberEntered))
+            if (numberEntered < 1 || numberEntered > 10000)
             {
-                if (numberEntered < 1 || numberEntered > 10000)
-                {
-                    MessageBox.Show("Please enter correct _price.");
-                    txtPrice.Text = "0";
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please enter correct _price");
+                MessageBox.Show("Please enter correct _price.");
                 txtPrice.Text = "0";
             }
-
+            
         } 
         #endregion
 
