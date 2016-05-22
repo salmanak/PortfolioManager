@@ -10,6 +10,7 @@ using PortfolioManager.MarketData;
 using PortfolioManager.View;
 using PortfolioManager.Common;
 using PortfolioManager.Data;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace PortfolioManager.View
 {
@@ -45,6 +46,8 @@ namespace PortfolioManager.View
             _bindingSourcePortfolio = new BindingSourceEx(this);
 
             _bindingSourcePortfolioAggregate = new BindingSourceEx(this);
+
+            InitChart();
 
         }
 
@@ -116,7 +119,7 @@ namespace PortfolioManager.View
                                                 txtSymbol.Text.ToUpper(),
                                                 long.Parse(txtShares.Text),
                                                 double.Parse(txtPrice.Text));
-                // TODO: generalize return codes
+                // TODO: return codes are now invalid. FIX it
                 if (result == -2)
                 {
                     _logger.LogError("Unable to add trade in database");
@@ -129,6 +132,7 @@ namespace PortfolioManager.View
                 }
                 else
                 {
+                    txtSymbol.Focus();
                     txtSymbol.Text = "";
                     txtShares.Text = "";
                     txtPrice.Text = "";
@@ -144,6 +148,7 @@ namespace PortfolioManager.View
 
         private void PortfolioView_FormClosing(object sender, FormClosingEventArgs e)
         {
+            timerChart.Enabled = false;
             _presenter.Close();
         }
 
@@ -193,7 +198,65 @@ namespace PortfolioManager.View
         } 
         #endregion
 
+        private static DateTime baseDate;
+        private void InitChart()
+        {
+            chartPortfolio.Annotations.Clear();
 
+            chartPortfolio.Series.Clear();
+            var series1 = new System.Windows.Forms.DataVisualization.Charting.Series
+            {
+                Name = "price",
+                //Color = System.Drawing.Color.Blue,
+
+                IsVisibleInLegend = false,
+                IsXValueIndexed = true,
+                ChartType = SeriesChartType.Line,
+                XValueType = ChartValueType.Time
+            };
+
+            chartPortfolio.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+            chartPortfolio.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
+
+            // show an X label every 3 Minute
+            //chartPortfolio.ChartAreas[0].AxisX.Interval = 0.5;
+            //chartPortfolio.ChartAreas[0].AxisX.IntervalType = DateTimeIntervalType.Seconds;
+            chartPortfolio.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
+
+            this.chartPortfolio.Series.Add(series1);
+
+            chartPortfolio.Invalidate();
+
+            baseDate = DateTime.Now;
+        }
+
+        private void UpdateChart()
+        {
+            double dMin = 0;
+            double dMax = 0;
+
+            
+                //if (q.DailyHigh > dMax)
+                //    dMax = q.DailyHigh;
+                //if (dMax == 0)
+                //    dMax = q.DailyHigh;
+
+                //if (q.DailyLow < dMin)
+                //    dMin = q.DailyLow;
+                //if (dMin == 0)
+                //    dMin = q.DailyLow;
+
+               
+                //chartPortfolio.Series[0].Points.AddXY(q.Date, q.DailyHigh, q.DailyLow, q.Open, q.PreviousClose);
+
+
+
+            float fDiff = (float)(dMax) - (float)dMin;
+            chartPortfolio.ChartAreas[0].AxisY.Minimum = Convert.ToDouble((float)dMin - ((5f / 100f) * (fDiff)));
+            chartPortfolio.ChartAreas[0].AxisY.Maximum = Convert.ToDouble((float)dMax + ((5f / 100f) * (fDiff)));
+
+            chartPortfolio.Invalidate();
+        }
 
         private delegate void OnExceptionHandle(Exception ex);
         public void HandleException(Exception ex)
@@ -206,6 +269,20 @@ namespace PortfolioManager.View
             {
                 MessageBox.Show(this, ex.Message, "ERROR");
             }
+        }
+
+        
+
+        private void lblUnRlzPLValue_TextChanged(object sender, EventArgs e)
+        {
+            this.lblUnRlzPLValue.TextChanged -= new System.EventHandler(this.lblUnRlzPLValue_TextChanged);
+            
+            timerChart.Enabled = true;
+        }
+
+        private void timerChart_Tick(object sender, EventArgs e)
+        {
+            chartPortfolio.Series[0].Points.AddXY(DateTime.Now, Utility.GetDouble(lblUnRlzPLValue.Text));
         }
     }
 }
