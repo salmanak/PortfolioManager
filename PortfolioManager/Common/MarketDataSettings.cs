@@ -19,27 +19,85 @@ namespace PortfolioManager.Common
         /// <returns></returns>
         public static MarketDataSettings GetConfiguration()
         {
+            string activeMarketDataSettingsName = GetActiveMarketDateSettingsName();
+            if (string.IsNullOrEmpty(activeMarketDataSettingsName))
+                activeMarketDataSettingsName = "yahoo";
+
             MarketDataSettings configuration =
-                ConfigurationManager
-                .GetSection("marketDataSettings")
+                ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
+                .SectionGroups["marketDataSettings"]
+                .Sections[activeMarketDataSettingsName]
                 as MarketDataSettings;
+
+            //MarketDataSettings configuration =
+            //    ConfigurationManager
+            //    .GetSection("marketDataSettings")
+            //    as MarketDataSettings;
 
             if (configuration != null)
                 return configuration;
 
             return new MarketDataSettings();
-        } 
+        }
+
+        public static string GetActiveMarketDateSettingsName()
+        {
+            try
+            {
+                return
+                    (ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
+                    .SectionGroups["marketDataSettings"]
+                    .Sections["_activeSettings"]
+                    as MarketDataSettings)
+                    .Name;
+            }
+            catch (Exception ex)
+            {
+                //TODO: Log error
+                return "";
+            }
+        }
+
         #endregion
 
         #region Properties
-        [ConfigurationProperty("url", IsRequired = false)]
-        public string URL
+
+        [ConfigurationProperty("name", IsRequired = false)]
+        public string Name
         {
             get
             {
-                return this["url"] as string;
+                return this["name"] as string;
             }
         }
+
+        [ConfigurationProperty("urlPrefix", IsRequired = false)]
+        public string URLPrefix
+        {
+            get
+            {
+                return this["urlPrefix"] as string;
+            }
+        }
+
+        [ConfigurationProperty("symbolsSeparator", IsRequired = false)]
+        public string SymbolsSeparator
+        {
+            get
+            {
+                return this["symbolsSeparator"] as string;
+            }
+        }
+
+        [ConfigurationProperty("urlPostfix", IsRequired = false)]
+        public string URLPostfix
+        {
+            get
+            {
+                return this["urlPostfix"] as string;
+            }
+        }
+        
 
         [ConfigurationProperty("proxyAddress", IsRequired = false)]
         public string ProxyAddress
