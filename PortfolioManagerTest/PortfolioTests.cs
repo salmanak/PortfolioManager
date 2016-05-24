@@ -5,7 +5,8 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using PortfolioManager;
-using PortfolioManager.Data;
+using PortfolioManager.Model;
+using PortfolioManager.Common.Interfaces.Model;
 
 namespace PortfolioManagerTest
 {
@@ -69,18 +70,18 @@ namespace PortfolioManagerTest
             long expectedShares = 200;
             double expecctedPrice = 15;
 
-            PortfolioDao portfolioDao = new PortfolioDao();
+            IPortfolioDao portfolioDao = new PortfolioDao();
             portfolioDao.Save(new PortfolioDataEntity("GPRO", 100, 10));
             portfolioDao.Save(new PortfolioDataEntity("GPRO", 100, 20));
 
             // act
-            PortfolioDataEntity portfolio = portfolioDao.GetBySymbol("GPRO");
+            IPortfolioDataEntity portfolio = portfolioDao.GetBySymbol("GPRO");
 
             // assert
             long actualShares = portfolio.Shares;
             double actualPrice = portfolio.Price;
 
-            Assert.AreEqual(expectedShares, actualShares, 0.0 , "Cummulative Shares computed incorrectly");
+            Assert.AreEqual(expectedShares, actualShares, 0.0, "Cummulative Shares computed incorrectly");
             Assert.AreEqual(expecctedPrice, actualPrice, 0.0, "Weighted Average Price computed incorrectly");
         }
 
@@ -91,12 +92,12 @@ namespace PortfolioManagerTest
             long expectedShares = 150;
             double expecctedPrice = 20;
 
-            PortfolioDao portfolioDao = new PortfolioDao();
+            IPortfolioDao portfolioDao = new PortfolioDao();
             portfolioDao.Save(new PortfolioDataEntity("GPRO", 50, 20));
             portfolioDao.Save(new PortfolioDataEntity("GPRO", 100, 20));
 
             // act
-            PortfolioDataEntity portfolio = portfolioDao.GetBySymbol("GPRO");
+            IPortfolioDataEntity portfolio = portfolioDao.GetBySymbol("GPRO");
 
             // assert
             long actualShares = portfolio.Shares;
@@ -113,12 +114,12 @@ namespace PortfolioManagerTest
             long expectedShares = 300;
             double expecctedPrice = 20;
 
-            PortfolioDao portfolioDao = new PortfolioDao();
+            IPortfolioDao portfolioDao = new PortfolioDao();
             portfolioDao.Save(new PortfolioDataEntity("GPRO", 200, 10));
             portfolioDao.Save(new PortfolioDataEntity("GPRO", 100, 40));
 
             // act
-            PortfolioDataEntity portfolio = portfolioDao.GetBySymbol("GPRO");
+            IPortfolioDataEntity portfolio = portfolioDao.GetBySymbol("GPRO");
 
             // assert
             long actualShares = portfolio.Shares;

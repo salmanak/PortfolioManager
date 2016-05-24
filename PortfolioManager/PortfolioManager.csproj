@@ -33,6 +33,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
@@ -53,45 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\AutoQueue.cs" />
-    <Compile Include="Common\IExceptionHandler.cs" />
-    <Compile Include="Common\ILogger.cs" />
-    <Compile Include="Common\IObservableObject.cs" />
-    <Compile Include="Common\LoggingService.cs" />
-    <Compile Include="Common\MarketDataSettings.cs" />
-    <Compile Include="Common\ObservableObject.cs" />
-    <Compile Include="Common\Utility.cs" />
-    <Compile Include="Data\DatabaseConnection.cs" />
-    <Compile Include="Data\MarketDataEntity.cs" />
-    <Compile Include="Data\TradeDataMapper.cs" />
-    <Compile Include="MarketData\ServiceClientCreator.cs" />
-    <Compile Include="MarketData\ServiceClients\Barchart\BarchartClient.cs" />
-    <Compile Include="MarketData\IServiceClient.cs" />
-    <Compile Include="MarketData\ServiceClients\Barchart\ObjectModel\Result_getQuote.cs" />
-    <Compile Include="MarketData\ServiceClients\Barchart\ObjectModel\RootObject_getQuote.cs" />
-    <Compile Include="MarketData\ServiceClients\Barchart\ObjectModel\Status.cs" />
-    <Compile Include="MarketData\ServiceClientSimulator.cs" />
-    <Compile Include="MarketData\ServiceClients\Yahoo\ObjectModel\Quote.cs" />
-    <Compile Include="MarketData\ServiceClients\Yahoo\YahooClient.cs" />
-    <Compile Include="View\BindingSourceEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="View\PortfolioView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\PortfolioView.Designer.cs">
-      <DependentUpon>PortfolioView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\IPortfolioDao.cs" />
-    <Compile Include="View\IPortfolioView.cs" />
-    <Compile Include="Data\PortfolioDao.cs" />
-    <Compile Include="Data\PortfolioDataEntity.cs" />
-    <Compile Include="PortfolioPresenter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="View\PortfolioView.resx">
-      <DependentUpon>PortfolioView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -118,11 +83,29 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="UnUsedCodeRuleSet.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Script\PortfolioManager.sql" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PortfolioManager.Common\PortfolioManager.Common.csproj">
+      <Project>{796E7F88-4EF1-48A7-B999-C0CFAB2C6889}</Project>
+      <Name>PortfolioManager.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PortfolioManager.Model\PortfolioManager.Model.csproj">
+      <Project>{EFB1C786-52E3-45C9-BD1F-ED9D12503EE9}</Project>
+      <Name>PortfolioManager.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PortfolioManager.Presenter\PortfolioManager.Presenter.csproj">
+      <Project>{FE4FB3DB-64B1-4005-8D68-A705F728AA22}</Project>
+      <Name>PortfolioManager.Presenter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PortfolioManager.View\PortfolioManager.View.csproj">
+      <Project>{3A6BC9E4-7C91-4485-AE69-750A93EB6FC0}</Project>
+      <Name>PortfolioManager.View</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

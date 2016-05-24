@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PortfolioManager.Common.AutoQueue&lt;T&gt;">
+    <Position X="12" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAACAgAAAAAAAAAAAAAAAAAAAAIQAACAAAAEQ=</HashCode>
+      <FileName>AutoQueue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.Common.BindingSourceEx">
+    <Position X="12.75" Y="2.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="PortfolioManager.Common.BindingSourceEx.OnListChangedDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>BindingSourceEx.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BindingSourceEx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.Common.GenericsEventArgs&lt;T&gt;">
+    <Position X="13.75" Y="9.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GenericsEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.Common.LoggingService" BaseTypeListCollapsed="true">
+    <Position X="17.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAgBAAAAAAACAAAAAAA=</HashCode>
+      <FileName>LoggingService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="PortfolioManager.Common.MarketDataSettings">
+    <Position X="9.75" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAKAAAAAEAAAAAAAAAAAAQCIAAAAAAAgAAAQAAAAAA=</HashCode>
+      <FileName>MarketDataSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.Common.ObservableObject&lt;T&gt;" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="6.25" Width="1.75" />
+    <NestedTypes>
+      <Delegate Name="PortfolioManager.Common.ObservableObject&lt;T&gt;.NotifyObserver" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ObservableObject.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAxAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>ObservableObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="PortfolioManager.Common.Utility">
+    <Position X="12.75" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="PortfolioManager.Common.IExceptionHandler">
+    <Position X="9.25" Y="9.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IExceptionHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.ILogger">
+    <Position X="18" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAgBAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\ILogger.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.IObservableObject&lt;T&gt;">
+    <Position X="11" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAhAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IObservableObject.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.Interfaces.MarketData.IServiceClient">
+    <Position X="3" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAABAIAAICAAAACAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\MarketData\IServiceClient.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.Interfaces.Model.IMarketDataEntity">
+    <Position X="4.5" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Interfaces\Model\IMarketDataEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.Interfaces.Model.IPortfolioAggregate">
+    <Position X="4.5" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAACAA=</HashCode>
+      <FileName>Interfaces\Model\IPortfolioAggregate.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.Interfaces.Model.IPortfolioDao">
+    <Position X="7.25" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AEAABIAAAAAAAAAAAAAABAAAAAAAIAAAAAAAAABCCAA=</HashCode>
+      <FileName>Interfaces\Model\IPortfolioDao.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.Interfaces.Model.IPortfolioDataEntity">
+    <Position X="6.75" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAQAAAAAAAAAAABQAAACAAAAAAAAAAAAADAA=</HashCode>
+      <FileName>Interfaces\Model\IPortfolioDataEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.Interfaces.Presenter.IPortfolioPresenter">
+    <Position X="3" Y="6" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAACAAAAAAAAAAAAAAAAAAAAAAQAAAAAACAAAA=</HashCode>
+      <FileName>Interfaces\Presenter\IPortfolioPresenter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="PortfolioManager.Common.Interfaces.View.IPortfolioView">
+    <Position X="5" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAACAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\View\IPortfolioView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Delegate Name="PortfolioManager.Common.AutoQueueEventHandler&lt;T, U&gt;">
+    <Position X="13.75" Y="11.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AutoQueue.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="PortfolioManager.Common.Interfaces.MarketData.ServiceClientSimulatorCallBack">
+    <Position X="4.75" Y="9.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Interfaces\MarketData\IServiceClient.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

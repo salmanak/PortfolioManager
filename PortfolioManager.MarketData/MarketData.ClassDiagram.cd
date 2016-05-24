@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PortfolioManager.MarketData.ServiceClientCreator">
+    <Position X="10" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceClientCreator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.MarketData.ServiceClients.Barchart.BarchartClient">
+    <Position X="9" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAEAAAAIAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceClients\Barchart\BarchartClient.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PortfolioManager.MarketData.ServiceClients.Barchart.ObjectModel.Result_getQuote">
+    <Position X="8.25" Y="10.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AACIAAAAAAIAAACAAqAASAIAAAAEAAIAAMAAAAAGEAA=</HashCode>
+      <FileName>ServiceClients\Barchart\ObjectModel\Result_getQuote.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.MarketData.ServiceClients.Barchart.ObjectModel.RootObject_getQuote">
+    <Position X="10.25" Y="10.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceClients\Barchart\ObjectModel\RootObject_getQuote.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.MarketData.ServiceClients.Barchart.ObjectModel.Status">
+    <Position X="10.25" Y="11.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>ServiceClients\Barchart\ObjectModel\Status.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.MarketData.ServiceClients.Yahoo.ObjectModel.Quote">
+    <Position X="3.5" Y="10.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAIAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceClients\Yahoo\ObjectModel\Quote.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PortfolioManager.MarketData.ServiceClients.Yahoo.YahooClient">
+    <Position X="3.5" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAEAAAAIAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceClients\Yahoo\YahooClient.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PortfolioManager.MarketData.ServiceClients.ServiceClientSimulator">
+    <Position X="5.75" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>QAwAIABADAEASAAABAAAAICAKAACAQCAQAAAAAQAAAA=</HashCode>
+      <FileName>ServiceClientSimulator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_serviceClient" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="PortfolioManager.Common.Interfaces.MarketData.IServiceClient">
+    <Position X="10" Y="2.5" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,193 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="PortfolioManager.Data.PortfolioAggregate">
-    <Position X="1.75" Y="5" Width="2.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-      <Compartment Name="Methods" Collapsed="true" />
-      <Compartment Name="Events" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAKAAAAAAAAAAgAAAAAQAAIAAAAAACAA=</HashCode>
-      <FileName>Data\PortfolioDao.cs</FileName>
-    </TypeIdentifier>
+  <Class Name="PortfolioManager.Model.PortfolioDao">
+    <Position X="3.5" Y="4" Width="2.5" />
+    <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="PortfolioManager.Data.PortfolioDao" BaseTypeListCollapsed="true">
-    <Position X="5" Y="3.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AEAABMAAAAAAAAAAAAAABAAAIAAAAAAAAAAAAAAACAE=</HashCode>
-      <FileName>Data\PortfolioDao.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
+  <Class Name="PortfolioManager.Presenter.PortfolioPresenter">
+    <Position X="6.75" Y="4" Width="2.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="PortfolioManager.Data.PortfolioDataEntity" BaseTypeListCollapsed="true">
-    <Position X="1.75" Y="1" Width="2.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AgAQCAAAASAAAKEAAAAAABQAgICAAAAQAAAAAAAADAA=</HashCode>
-      <FileName>Data\PortfolioDataEntity.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
+  <Class Name="PortfolioManager.View.PortfolioView">
+    <Position X="10" Y="4" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="PortfolioManager.PortfolioPresenter">
-    <Position X="9.75" Y="1" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAYABIAAAAAAAIAAAAAAAAAAIAAAABAAAAACAACQgAA=</HashCode>
-      <FileName>PortfolioPresenter.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_portfolioDao" />
-      <Field Name="_portfolioView" />
-      <Field Name="_mktDataAdapter" />
-      <Field Name="_tradeDataMapper" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="PortfolioManager.View.PortfolioView" BaseTypeListCollapsed="true">
-    <Position X="16.25" Y="2.5" Width="2.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>gQEAAAAEECAQgIAAAQCRAqACIggAAAAACAIEQAERwIA=</HashCode>
-      <FileName>View\PortfolioView.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="PortfolioManager.Common.LoggingService" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="1.75" Y="10.25" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAgAAAAAAAACAAAAAAA=</HashCode>
-      <FileName>Common\LoggingService.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="PortfolioManager.Common.MarketDataSettings">
-    <Position X="18" Y="9" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACACAAAAAAgAAAAAAAAAA=</HashCode>
-      <FileName>Common\MarketDataSettings.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.Common.ObservableObject&lt;T&gt;">
-    <Position X="16" Y="7.25" Width="1.75" />
-    <Compartments>
-      <Compartment Name="Nested Types" Collapsed="false" />
-    </Compartments>
-    <NestedTypes>
-      <Delegate Name="PortfolioManager.Common.ObservableObject&lt;T&gt;.NotifyObserver" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Common\ObservableObject.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-    </NestedTypes>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAxAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
-      <FileName>Common\ObservableObject.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.Data.DatabaseConnection">
-    <Position X="7.5" Y="9.75" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DatabaseConnection.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.Data.MarketDataEntity">
-    <Position X="15.75" Y="11" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAACAA=</HashCode>
-      <FileName>Data\MarketDataEntity.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.Data.TradeDataMapper">
-    <Position X="7.5" Y="7.25" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAoAAAAAAAAAAAAAAEAAA=</HashCode>
-      <FileName>Data\TradeDataMapper.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_dbConnection" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="PortfolioManager.MarketData.IMarketData">
-    <Position X="12.75" Y="7.25" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAACAAAAYAAAAAAAAAA=</HashCode>
-      <FileName>MarketData\IMarketData.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.MarketData.MarketDataAdapter">
-    <Position X="12.75" Y="10.5" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAIAADCAAQAAAAAABAAAAKAACAAAAYAAAAAQAAAA=</HashCode>
-      <FileName>MarketData\MarketDataAdapter.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.MarketData.MarketDataProvider">
-    <Position X="18" Y="7.25" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>MarketData\MarketDataProvider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.MarketData.Result_getQuote" Collapsed="true">
-    <Position X="18" Y="11.25" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AACIAAAAAAIAAACAAqAASAIAAAAEAAIAAMAAAAAGEAA=</HashCode>
-      <FileName>MarketData\MarketDataProvider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.MarketData.RootObject_getQuote" Collapsed="true">
-    <Position X="18" Y="12" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
-      <FileName>MarketData\MarketDataProvider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.MarketData.Status" Collapsed="true">
-    <Position X="18" Y="12.75" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAACA=</HashCode>
-      <FileName>MarketData\MarketDataProvider.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PortfolioManager.View.BindingSourceEx">
-    <Position X="19.25" Y="2.5" Width="1.5" />
-    <NestedTypes>
-      <Delegate Name="PortfolioManager.View.BindingSourceEx.OnListChangedDelegate" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>View\BindingSourceEx.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-    </NestedTypes>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>View\BindingSourceEx.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Interface Name="PortfolioManager.Data.IPortfolioDao">
-    <Position X="5" Y="1" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AEAABIAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAACAA=</HashCode>
-      <FileName>Data\IPortfolioDao.cs</FileName>
-    </TypeIdentifier>
+  <Interface Name="PortfolioManager.Common.Interfaces.Presenter.IPortfolioPresenter">
+    <Position X="7" Y="0.75" Width="1.75" />
+    <TypeIdentifier />
   </Interface>
-  <Interface Name="PortfolioManager.View.IPortfolioView">
-    <Position X="16.25" Y="0.75" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAIAAAAAAACAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>View\IPortfolioView.cs</FileName>
-    </TypeIdentifier>
+  <Interface Name="PortfolioManager.Common.Interfaces.View.IPortfolioView">
+    <Position X="10.25" Y="0.75" Width="2" />
+    <TypeIdentifier />
   </Interface>
-  <Interface Name="PortfolioManager.Common.ILogger" Collapsed="true">
-    <Position X="1.75" Y="11" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Common\LoggingService.cs</FileName>
-    </TypeIdentifier>
+  <Interface Name="PortfolioManager.Common.Interfaces.Model.IPortfolioDao">
+    <Position X="3.5" Y="0.75" Width="2" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="PortfolioManager.Common.IExceptionHandler">
+    <Position X="0.75" Y="0.75" Width="2" />
+    <TypeIdentifier />
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
