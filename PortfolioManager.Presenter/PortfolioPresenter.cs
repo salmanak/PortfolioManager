@@ -117,14 +117,6 @@ namespace PortfolioManager.Presenter
             //task.ContinueWith(t => GetAllTradesComplete(t.Result));
             task.ContinueWith(t => GetAllTradesComplete());
         }
-        /// <summary>
-        /// Gets the trades from the database
-        /// </summary>
-        /// <returns>trades fetched from database</returns>
-        //private IEnumerable<IPortfolioDataEntity> GetAllTradesFromDB()
-        //{
-        //    return _portfolioDao.RecoverPersistedTrades();
-        //}
         #endregion
 
         #region General Methods
@@ -169,17 +161,6 @@ namespace PortfolioManager.Presenter
             _serviceClient.SubscribeAll(_portfolioDao.GetAllPortfolioItems().Select(x => x.Symbol).ToList());
 
         }
-
-        /// <summary>
-        /// passes trades to the darta access component to save in cache
-        /// </summary>
-        /// <param name="trades"></param>
-        //private void ProcessAllTrades(IEnumerable<IPortfolioDataEntity> trades)
-        //{
-        //    foreach (var item in trades)
-        //        Save(item, false);
-        //}
-
         #endregion
 
         #region View Methods
@@ -255,26 +236,14 @@ namespace PortfolioManager.Presenter
         }
 
         /// <summary>
-        /// event handler to process the database updates
+        /// to be called once the data has been received from the DAO
         /// </summary>
-        /// <param name="trades">trades retrieved from the database</param>
-        //void GetAllTradesComplete(IEnumerable<IPortfolioDataEntity> trades)
-        //{
-        //    _logger.LogDebug("GetAllTradesComplete ");
-
-        //    ProcessAllTrades(trades);
-
-        //    SubscribeMarketData();
-        //}
-
         void GetAllTradesComplete()
         {
             _logger.LogDebug("GetAllTradesComplete ");
             //ProcessAllTrades(trades);
             SubscribeMarketData();
         }
-
-
         #endregion
 
     }
