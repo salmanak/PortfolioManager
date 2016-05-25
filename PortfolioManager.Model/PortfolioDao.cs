@@ -110,16 +110,35 @@ namespace PortfolioManager.Model
             
             _portfolioAggregate.UnrealizedGainAggregate = Math.Round(_portfolioItems.Sum(s => s.UnrealizedGain), 2);
         }
+
+        /// <summary>
+        /// Save all the portfolios in cache
+        /// </summary>
+        /// <param name="portfolios"></param>
+        private void Save(IEnumerable<IPortfolioDataEntity> portfolios)
+        {
+            portfolios
+                .ToList()
+                .ForEach(x => SaveInternal(x));
+        }
+
         /// <summary>
         /// Saves  market data for portfolio in cache
         /// </summary>
         /// <param name="portfolio">the portfolio item to save</param>
-        public void Save(IPortfolioDataEntity portfolio, bool persist = false)
+        public void Save(IPortfolioDataEntity portfolio)
         {
+            PersistTradeAsync(portfolio);
 
-            if ( persist) 
-                PersistTradeAsync(portfolio);
+            SaveInternal(portfolio);
+        }
 
+        /// <summary>
+        /// Only save in Cache. Does not save in persistant storage
+        /// </summary>
+        /// <param name="portfolio"></param>
+        private void SaveInternal(IPortfolioDataEntity portfolio)
+        {
             _logger.Log("Saving for _symbol : " + portfolio.Symbol);
 
             var result = _portfolioItems.Where(p => p.Symbol == portfolio.Symbol).FirstOrDefault();
@@ -136,29 +155,38 @@ namespace PortfolioManager.Model
 
                 result.Price = AvgPx;
                 result.Shares = CumQty;
-                result.Cost = Math.Round(CumQty * AvgPx,2);
+                result.Cost = Math.Round(CumQty * AvgPx, 2);
 
-                result.MarketPrice = Math.Round(portfolio.MarketPrice,2);
-                result.MarketValue = Math.Round(portfolio.MarketValue,2);
-                result.UnrealizedGain = Math.Round(portfolio.UnrealizedGain,2);
+                result.MarketPrice = Math.Round(portfolio.MarketPrice, 2);
+                result.MarketValue = Math.Round(portfolio.MarketValue, 2);
+                result.UnrealizedGain = Math.Round(portfolio.UnrealizedGain, 2);
             }
             else
             {
-                portfolio.Cost = Math.Round(portfolio.Shares * portfolio.Price,2);
+                portfolio.Cost = Math.Round(portfolio.Shares * portfolio.Price, 2);
 
                 _portfolioItems.Add(portfolio);
             }
-            
-            _portfolioAggregate.CostAggregate = Math.Round(_portfolioItems.Sum(s => s.Cost),2);
+
+            _portfolioAggregate.CostAggregate = Math.Round(_portfolioItems.Sum(s => s.Cost), 2);
         } 
         #endregion
 
         #region Recovery and Persistance Methods
+
         /// <summary>
-        /// Gets all trades from the database
+        /// Loads and then Saves Trades from the persisted storage
         /// </summary>
-        /// <returns>All trades</returns>
-        public IEnumerable<IPortfolioDataEntity> RecoverPersistedTrades()
+        public void Load()
+        {
+            Save(RecoverPersistedTrades());
+        }
+
+        /// <summary>
+        /// Recovers the Trades from Persistant Storage
+        /// </summary>
+        /// <returns>Trades recovered from persistant storage</returns>
+        private IEnumerable<IPortfolioDataEntity> RecoverPersistedTrades()
         {
             _logger.Log("Getting Trades from DB.");
 
@@ -247,10 +275,10 @@ namespace PortfolioManager.Model
         }
 
         /// <summary>
-        /// Asynchronously save trade in the database
+        /// Persists the trades Asynchronously
         /// </summary>
-        /// <param name="portfolio">item to be saved</param>
-        public void PersistTradeAsync(IPortfolioDataEntity portfolio)
+        /// <param name="portfolio">item to be persisted</param>
+        private void PersistTradeAsync(IPortfolioDataEntity portfolio)
         {
             PersistTradeAsync(portfolio.Symbol, portfolio.Shares, portfolio.Price);
         }
@@ -262,7 +290,7 @@ namespace PortfolioManager.Model
         /// <param name="shares">shares for the trade</param>
         /// <param name="price">price for the trade</param>
         /// <returns></returns>
-        public void PersistTradeAsync(String symbol, long shares, double price)
+        private void PersistTradeAsync(String symbol, long shares, double price)
         {
             _logger.Log("Saving Trade in DB.");
 

@@ -111,17 +111,20 @@ namespace PortfolioManager.Presenter
         /// </summary>
         private void GetAllDataFromDBAsynch()
         {
-            var task = Task.Factory.StartNew(() => GetAllTradesFromDB());
-            task.ContinueWith(t => GetAllTradesComplete(t.Result));
+            
+            //var task = Task.Factory.StartNew(() => GetAllTradesFromDB());
+            var task = Task.Factory.StartNew(() => _portfolioDao.Load());
+            //task.ContinueWith(t => GetAllTradesComplete(t.Result));
+            task.ContinueWith(t => GetAllTradesComplete());
         }
         /// <summary>
         /// Gets the trades from the database
         /// </summary>
         /// <returns>trades fetched from database</returns>
-        private IEnumerable<IPortfolioDataEntity> GetAllTradesFromDB()
-        {
-            return _portfolioDao.RecoverPersistedTrades();
-        }
+        //private IEnumerable<IPortfolioDataEntity> GetAllTradesFromDB()
+        //{
+        //    return _portfolioDao.RecoverPersistedTrades();
+        //}
         #endregion
 
         #region General Methods
@@ -139,9 +142,9 @@ namespace PortfolioManager.Presenter
         /// Called to save a new trade
         /// </summary>
         /// <param name="portfolio">trade info that needs to be saved</param>
-        private void Save(IPortfolioDataEntity portfolio, bool persist = false)
+        private void Save(IPortfolioDataEntity portfolio)
         {
-            _portfolioDao.Save(portfolio, persist);
+            _portfolioDao.Save(portfolio);
             //if ( persist )
             //    _portfolioDao.PersistTradeAsync(portfolio);
 
@@ -171,11 +174,11 @@ namespace PortfolioManager.Presenter
         /// passes trades to the darta access component to save in cache
         /// </summary>
         /// <param name="trades"></param>
-        private void ProcessAllTrades(IEnumerable<IPortfolioDataEntity> trades)
-        {
-            foreach (var item in trades)
-                Save(item, false);
-        }
+        //private void ProcessAllTrades(IEnumerable<IPortfolioDataEntity> trades)
+        //{
+        //    foreach (var item in trades)
+        //        Save(item, false);
+        //}
 
         #endregion
 
@@ -189,7 +192,7 @@ namespace PortfolioManager.Presenter
         public int AddPortfolioClicked(String symbol, long shares, double price)
         {
 
-            Save(new PortfolioDataEntity(symbol, shares, price), true);
+            Save(new PortfolioDataEntity(symbol, shares, price));
 
             _portfolioView.UpdatePortfolioItems();
 
@@ -255,14 +258,22 @@ namespace PortfolioManager.Presenter
         /// event handler to process the database updates
         /// </summary>
         /// <param name="trades">trades retrieved from the database</param>
-        void GetAllTradesComplete(IEnumerable<IPortfolioDataEntity> trades)
+        //void GetAllTradesComplete(IEnumerable<IPortfolioDataEntity> trades)
+        //{
+        //    _logger.LogDebug("GetAllTradesComplete ");
+
+        //    ProcessAllTrades(trades);
+
+        //    SubscribeMarketData();
+        //}
+
+        void GetAllTradesComplete()
         {
             _logger.LogDebug("GetAllTradesComplete ");
-
-            ProcessAllTrades(trades);
-
+            //ProcessAllTrades(trades);
             SubscribeMarketData();
         }
+
 
         #endregion
 
