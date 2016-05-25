@@ -155,14 +155,6 @@ namespace PortfolioManager.Model
 
         #region Recovery and Persistance Methods
         /// <summary>
-        /// initialization method to recover the trades from database
-        /// </summary>
-        /*public void Init()
-        {
-            RecoverPersistedTrades();
-        }*/
-
-        /// <summary>
         /// Gets all trades from the database
         /// </summary>
         /// <returns>All trades</returns>
