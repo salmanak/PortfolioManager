@@ -139,68 +139,17 @@ namespace PortfolioManager.MarketData.ServiceClients.Yahoo
                 if ((webResponse.StatusCode == HttpStatusCode.OK))// && (webResponse.ContentLength > 0))
                 {
                     StreamReader reader = new StreamReader(webResponse.GetResponseStream());
-                    string str = reader.ReadToEnd();
+                    string data = reader.ReadToEnd();
 
-                    if (string.IsNullOrEmpty(str))
+                    if (string.IsNullOrEmpty(data))
                         return;
 
-                    string[] lines = str.Replace("\r", "").Split('\n');
-                    foreach (string item in lines)
-                    {
-                        Quote q = Quote.FromString(item);
+                    data
+                        .Replace("\r", String.Empty)
+                        .Split('\n')
+                            .ToList()
+                            .ForEach(x => AddQuoteInSymbols(symbols, Quote.FromString(x)));
 
-                        if ( q != null && !string.IsNullOrEmpty(q.symbol))
-                            symbols[q.symbol] = q;
-                    } 
-                    
-                        
-
-                  
-
-                        
-                    //s.Replace("\r", "")
-                    //.Split('\n')
-                    //.Select(x => x.Split(','))
-                    //.Select(x => symbols[x[0]] = x[1]);
-
-                    //symbols = s.Replace("\r", "")
-                    //            .Split('\n')
-                    //            .Select(x => x.Split(','))
-                    //            .ToDictionary(key => key[0].Trim(), value => value[1].Trim());
-
-
-                    //var a = str.Replace("\r", "");
-                    //var b = a.Split('\n');
-                    //var c = b.Select(x => x.Split(",".ToCharArray(),StringSplitOptions.RemoveEmptyEntries));
-                    //c = c.Where(s => s.Length>0).ToList();
-                    ////symbols = c.ToDictionary(key => key[0].Replace('"', ' ').Trim(), value => value[1].Replace('"', ' ').Trim());                    
-                    //c.Select(x => symbols[x[0].Replace('"', ' ').Trim()] = x[1].Replace('"', ' ').Trim());
-
-
-                    //var data = s.Replace("\r", "")
-                    //            .Split('\n')
-                    //            .Select(x => x.Split(','))
-                    //            .Select(x => new
-                    //                {
-                    //                    symbol = x[0],
-                    //                    lastPrice = double.Parse(x[1])
-                    //                });
-
-
-
-
-                    //var serializer = new JavaScriptSerializer();
-                    //RootObject_getQuote arr = serializer.Deserialize<RootObject_getQuote>(s);
-
-                    //if (arr != null && arr.results != null)
-                    //{
-                    //    foreach (var item in arr.results)
-                    //    {
-                    //        symbols[item.symbol] = item;
-                    //    }
-                    //}
-
-                    //TODO: Need to make it loosely coupled
                     return;
 
                 }
@@ -216,6 +165,21 @@ namespace PortfolioManager.MarketData.ServiceClients.Yahoo
             return;
         }
 
+        /// <summary>
+        /// Refactored method add a quote in the dictionary
+        /// </summary>
+        /// <param name="symbols"></param>
+        /// <param name="q"></param>
+        private static void AddQuoteInSymbols(Dictionary<string, Quote> symbols, Quote q)
+        {
+            if (q != null && !string.IsNullOrEmpty(q.symbol))
+                symbols[q.symbol] = q;
+        }
+
+        /// <summary>
+        /// Updates the last price in the dictionary passed for each symbol
+        /// </summary>
+        /// <param name="symbols"></param>
         public void GetQuotes(Dictionary<string, double> symbols)
         {
             if (symbols.Count <= 0)
