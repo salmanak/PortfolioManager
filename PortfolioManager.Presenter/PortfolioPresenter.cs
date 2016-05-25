@@ -99,7 +99,7 @@ namespace PortfolioManager.Presenter
         private void InitMarketDataQueue()
         {
             _mktDataQueue = new AutoQueue<IMarketDataEntity>(_conflationRate);
-            _mktDataQueue.signalEvent += new AutoQueueEventHandler<AutoQueue<IMarketDataEntity>, IEnumerable<GenericsEventArgs<IMarketDataEntity>>>(OnSignalled);
+            _mktDataQueue.signalEvent += new AutoQueueEventHandler<IEnumerable<GenericsEventArgs<IMarketDataEntity>>>(OnSignalled);
             _mktDataQueue.Start();
         } 
         #endregion
@@ -141,9 +141,9 @@ namespace PortfolioManager.Presenter
         /// <param name="portfolio">trade info that needs to be saved</param>
         private void Save(IPortfolioDataEntity portfolio, bool persist = false)
         {
-            _portfolioDao.Save(portfolio);
-            if ( persist )
-                _portfolioDao.PersistTradeAsync(portfolio);
+            _portfolioDao.Save(portfolio, persist);
+            //if ( persist )
+            //    _portfolioDao.PersistTradeAsync(portfolio);
 
         }
 
@@ -237,9 +237,8 @@ namespace PortfolioManager.Presenter
         /// <summary>
         /// method which is called for market data updated after conflation duration has been passed
         /// </summary>
-        /// <param name="q">caller of the event</param>
         /// <param name="args">market data updates</param>
-        public void OnSignalled(AutoQueue<IMarketDataEntity> q, IEnumerable<GenericsEventArgs<IMarketDataEntity>> args) 
+        public void OnSignalled( IEnumerable<GenericsEventArgs<IMarketDataEntity>> args) 
         {
             foreach (GenericsEventArgs<IMarketDataEntity> item in args)
             {

@@ -55,7 +55,8 @@ namespace PortfolioManager.Common.Interfaces.Model
         /// Saves the portfolio trade in cache
         /// </summary>
         /// <param name="portfolio">the portfolio item to save</param>
-        void Save(IPortfolioDataEntity portfolio);
+        /// <param name="persist">persist in DB or not</param>
+        void Save(IPortfolioDataEntity portfolio, bool persist = false);
         /// <summary>
         /// Saves  market data for portfolio in cache
         /// </summary>

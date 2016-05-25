@@ -8,14 +8,16 @@ using System.Collections.Concurrent;
 
 namespace PortfolioManager.Common
 {
-    public delegate void AutoQueueEventHandler<T, U>(T sender, U eventArgs);
+    public delegate void AutoQueueEventHandler<T>(T eventArgs);
+
+    /// <summary>
+    /// Wrapper on Concurrent Queue having capability to Auto Dequeue all items after certain period of time
+    /// Can be used to conflate messages and throttle the speed
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class AutoQueue<T>:ConcurrentQueue<T>
     {
-        public event AutoQueueEventHandler<AutoQueue<T>, IEnumerable<GenericsEventArgs<T>>> signalEvent;
-        protected virtual void OnSignal(IEnumerable<GenericsEventArgs<T>> a)
-        {
-            signalEvent(this, a);
-        }
+        public event AutoQueueEventHandler<IEnumerable<GenericsEventArgs<T>>> signalEvent;
         
         private Timer m_timer;
         private int _interval;
@@ -39,7 +41,7 @@ namespace PortfolioManager.Common
         private void TimerProc(object state)
         {
             Stop();
-            signalEvent.Invoke(this, DequeuAll().Select(x => new GenericsEventArgs<T>(x)));
+            signalEvent.Invoke(/*this, */DequeuAll().Select(x => new GenericsEventArgs<T>(x)));
             Start();
         }
 
@@ -51,18 +53,6 @@ namespace PortfolioManager.Common
                 this.TryDequeue(out item);
                 yield return item;
             };
-        }
-
-        public int Test()
-        {
-            string s = "asdasdf";
-            if (s.CompareTo(DateTime.Now.ToString()) == 0)
-            {
-                return 0;
-            }
-            else
-                return -1;
-
         }
     }
 }

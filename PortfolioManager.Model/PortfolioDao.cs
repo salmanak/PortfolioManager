@@ -114,8 +114,12 @@ namespace PortfolioManager.Model
         /// Saves  market data for portfolio in cache
         /// </summary>
         /// <param name="portfolio">the portfolio item to save</param>
-        public void Save(IPortfolioDataEntity portfolio)
+        public void Save(IPortfolioDataEntity portfolio, bool persist = false)
         {
+
+            if ( persist) 
+                PersistTradeAsync(portfolio);
+
             _logger.Log("Saving for _symbol : " + portfolio.Symbol);
 
             var result = _portfolioItems.Where(p => p.Symbol == portfolio.Symbol).FirstOrDefault();
@@ -153,10 +157,10 @@ namespace PortfolioManager.Model
         /// <summary>
         /// initialization method to recover the trades from database
         /// </summary>
-        public void Init()
+        /*public void Init()
         {
             RecoverPersistedTrades();
-        }
+        }*/
 
         /// <summary>
         /// Gets all trades from the database
