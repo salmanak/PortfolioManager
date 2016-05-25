@@ -87,8 +87,8 @@ namespace PortfolioManager.View
             //lblUnRlzPLValue.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "UnrealizedGainAggregate", false, DataSourceUpdateMode.OnPropertyChanged);
 
 
-            lblPortfolioCost.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "CostAggregate", true, DataSourceUpdateMode.OnPropertyChanged, "", "#,0.00;-#,0.00");
-            lblUnRlzPLValue.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "UnrealizedGainAggregate", true, DataSourceUpdateMode.OnPropertyChanged, "", "#,0.00;-#,0.00");
+            lblPortfolioCost.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "CostAggregate", true, DataSourceUpdateMode.OnPropertyChanged, "", "$#,0.00;$-#,0.00");
+            lblUnRlzPLValue.DataBindings.Add("Text", _bindingSourcePortfolioAggregate, "UnrealizedGainAggregate", true, DataSourceUpdateMode.OnPropertyChanged, "", "$#,0.00;$-#,0.00");
 
         }
         /// <summary>
