@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PortfolioManager")]
+[assembly: AssemblyTitle("PortfolioManager.MarketData")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Hewlett-Packard Company")]
-[assembly: AssemblyProduct("PortfolioManager")]
+[assembly: AssemblyProduct("PortfolioManager.MarketData")]
 [assembly: AssemblyCopyright("Copyright © Hewlett-Packard Company 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a5f0bb95-1850-4ea2-a9c5-c2ad07e07701")]
+[assembly: Guid("e808bdc0-0781-4263-a314-be8b976d0403")]
 
 // Version information for an assembly consists of the following four values:
 //

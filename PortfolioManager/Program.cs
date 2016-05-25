@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using PortfolioManager.MarketData;
 using PortfolioManager.Common;
+using PortfolioManager.Common.Interfaces.Model;
+using PortfolioManager.Common.Interfaces.View;
+using PortfolioManager.Common.Interfaces.Presenter;
+using PortfolioManager.Model;
 using PortfolioManager.View;
-using PortfolioManager.Data;
+using PortfolioManager.Presenter;
 
 namespace PortfolioManager
 {
@@ -23,13 +26,11 @@ namespace PortfolioManager
             LoggingService.Init();
 
             IPortfolioDao dao = new PortfolioDao();
-            IMarketData mktDataAdapter = new MarketDataAdapter();
+            IPortfolioPresenter presenter = new PortfolioPresenter(dao);
+            IPortfolioView view = new PortfolioView(presenter);
 
-            PortfolioView view = new PortfolioView(dao,mktDataAdapter);
-
-            Application.Run(view);
-
-            //Application.Run(new TestForm());
+            Application.Run((Form)view);
         }
+
     }
 }
