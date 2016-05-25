@@ -13,30 +13,19 @@ namespace PortfolioManager.Common.Interfaces.Model
     public interface IPortfolioDao
     {
         #region Methods
+
+        #region Initialization Methods
+        /// <summary>
+        /// concrete class should load the data from persisted storage
+        /// </summary>
+        void Load();
         /// <summary>
         /// Creates the portfolio object
         /// </summary>
         IPortfolioDataEntity CreatePortfolioDataEntity();
+        #endregion
 
-        /// <summary>
-        /// Method to save the exception handler reference 
-        /// which can be used to notify GUI from non-GUI thread
-        /// </summary>
-        /// <param name="exceptionHandler">exception handler to notify GUI for exception</param>
-        void SetExceptionHandler(IExceptionHandler exceptionHandler);
-
-        /// <summary>
-        /// Recovers the Trades from Persistant Storage
-        /// </summary>
-        /// <returns>Trades recovered from persistant storage</returns>
-        IEnumerable<IPortfolioDataEntity> RecoverPersistedTrades();
-
-        /// <summary>
-        /// Persists the trades Asynchronously
-        /// </summary>
-        /// <param name="portfolio">item to be persisted</param>
-        void PersistTradeAsync(IPortfolioDataEntity portfolio);
-
+        #region Binding Methods
         /// <summary>
         /// Returns all the portfolio items
         /// </summary>
@@ -50,19 +39,32 @@ namespace PortfolioManager.Common.Interfaces.Model
         /// </summary>
         /// <param name="symbol">Symbol to search for</param>
         IPortfolioDataEntity GetBySymbol(string symbol);
+        #endregion
 
+        #region Save Methods
         /// <summary>
         /// Saves the portfolio trade in cache
         /// </summary>
         /// <param name="portfolio">the portfolio item to save</param>
         /// <param name="persist">persist in DB or not</param>
-        void Save(IPortfolioDataEntity portfolio, bool persist = false);
+        void Save(IPortfolioDataEntity portfolio);
         /// <summary>
         /// Saves  market data for portfolio in cache
         /// </summary>
         /// <param name="symbol">Symbol of portfolio</param>
         /// <param name="mktData">Market data to be saved</param>
-        void Save(String symbol, IMarketDataEntity mktData); 
+        void Save(String symbol, IMarketDataEntity mktData);
+        #endregion
+
+        #region Exception Handling Methods
+        /// <summary>
+        /// Method to save the exception handler reference 
+        /// which can be used to notify GUI from non-GUI thread
+        /// </summary>
+        /// <param name="exceptionHandler">exception handler to notify GUI for exception</param>
+        void SetExceptionHandler(IExceptionHandler exceptionHandler);
+        #endregion
+
         #endregion
     }
 }
