@@ -6,23 +6,12 @@ namespace PortfolioManager.Common.Interfaces.MarketData
 {
     public delegate void ServiceClientSimulatorCallBack(IMarketDataEntity mktData);
 
-    public interface IServiceClient
+    /// <summary>
+    /// To be implemented by Service Client that handles both Snapshot and RealTime data
+    /// Interface used by external world to interact with the Service Client
+    /// </summary>
+    public interface IServiceClient:IServiceClientSnapShot,IServiceClientRealTime
     {
-        #region Connection Management Methods
-        void Connect();
-        void Disconnect();
-        #endregion
 
-        #region Snapshot Quotes Access Methods
-        IMarketDataEntity GetQuote(string symbol);
-        void GetQuotes(Dictionary<string, double> symbols);
-        #endregion
-
-        #region Real-Time Quotes Access Methods
-        void RegisterCallBack(ServiceClientSimulatorCallBack callBack);
-        void Subscribe(string symbol);
-        void SubscribeAll(List<string> symbols);
-        void UnSubscribe(string symbol);
-        #endregion
     }
 }

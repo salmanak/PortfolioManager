@@ -12,7 +12,7 @@ using PortfolioManager.Model;
 
 namespace PortfolioManager.MarketData.ServiceClients.Yahoo
 {
-    class YahooClient : ServiceClientSimulator, IServiceClient
+    class YahooClient : ServiceClientRealTimeSimulator, IServiceClientSnapShot, IServiceClient
     {
 
         #region Declarations and Definitions

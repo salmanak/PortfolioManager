@@ -13,7 +13,7 @@ using PortfolioManager.Model;
 
 namespace PortfolioManager.MarketData.ServiceClients.Barchart
 {
-    public class BarchartClient:ServiceClientSimulator, IServiceClient
+    public class BarchartClient:ServiceClientRealTimeSimulator, IServiceClientSnapShot, IServiceClient
     {
 
         #region Declarations and Definitions

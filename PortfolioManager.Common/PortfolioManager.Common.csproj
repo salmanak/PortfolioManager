@@ -55,7 +55,9 @@
     <Compile Include="Interfaces\IExceptionHandler.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\IObservableObject.cs" />
+    <Compile Include="Interfaces\MarketData\IServiceClientRealTime.cs" />
     <Compile Include="Interfaces\MarketData\IServiceClient.cs" />
+    <Compile Include="Interfaces\MarketData\IServiceClientSnapShot.cs" />
     <Compile Include="Interfaces\Model\IMarketDataEntity.cs" />
     <Compile Include="Interfaces\Model\IPortfolioAggregate.cs" />
     <Compile Include="Interfaces\Model\IPortfolioDao.cs" />

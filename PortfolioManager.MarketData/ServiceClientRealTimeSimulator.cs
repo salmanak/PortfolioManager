@@ -12,14 +12,14 @@ using PortfolioManager.Model;
 
 namespace PortfolioManager.MarketData.ServiceClients
 {
-    public class ServiceClientSimulator
+    public class ServiceClientRealTimeSimulator:IServiceClientRealTime
     {
         
         #region Declarations and Definitions
         /// <summary>
         /// For Logging
         /// </summary>
-        private ILogger _logger = new LoggingService(typeof(ServiceClientSimulator));
+        private ILogger _logger = new LoggingService(typeof(ServiceClientRealTimeSimulator));
         /// <summary>
         /// data structure to maintain the symbol based market data
         /// </summary>
@@ -36,7 +36,7 @@ namespace PortfolioManager.MarketData.ServiceClients
         #endregion
 
 
-        public ServiceClientSimulator()
+        public ServiceClientRealTimeSimulator()
         {
             InitSimulation();
         }
