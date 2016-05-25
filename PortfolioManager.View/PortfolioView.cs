@@ -112,9 +112,9 @@ namespace PortfolioManager.View
 
             var seriesPrice = new System.Windows.Forms.DataVisualization.Charting.Series
             {
-                Name = "price",
+                Name = "ProfitLoss",
                 //Color = System.Drawing.Color.Blue,
-                IsVisibleInLegend = false,
+                IsVisibleInLegend = true,
                 IsXValueIndexed = true,
                 ChartType = SeriesChartType.Line,
                 XValueType = ChartValueType.Time
@@ -130,6 +130,8 @@ namespace PortfolioManager.View
 
             this.chartPortfolio.Series.Add(seriesPrice);
 
+            this.chartPortfolio.Legends[0].Docking = Docking.Bottom;
+            
             chartPortfolio.Invalidate();
 
         }
