@@ -74,7 +74,7 @@ namespace PortfolioManager.MarketData.ServiceClients
         {
             _serviceClient.GetQuotes(symbols);
 
-            foreach (var kvp in symbols)
+            foreach (var kvp in symbols.ToList())
             {
                 if (kvp.Value <= 0)
                 {
@@ -252,7 +252,7 @@ namespace PortfolioManager.MarketData.ServiceClients
         /// </summary>
         public double GetRandomNumber()
         {
-            return GetRandomNumber(1, 1000);
+            return GetRandomNumber(50, 300);
         }
         /// <summary>
         /// For Simulation

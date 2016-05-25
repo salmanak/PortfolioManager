@@ -136,10 +136,16 @@ namespace PortfolioManager.Presenter
         /// <param name="portfolio">trade info that needs to be saved</param>
         private void Save(IPortfolioDataEntity portfolio)
         {
-            _portfolioDao.Save(portfolio);
-            //if ( persist )
-            //    _portfolioDao.PersistTradeAsync(portfolio);
-
+            try
+            {
+                _portfolioDao.Save(portfolio);
+            }
+            catch (Exception ex)
+            {
+                string errorString = "Unable to save the trade.";
+                _logger.LogError(errorString, ex);
+                HandleException(new Exception(errorString, ex));
+            }
         }
 
         /// <summary>
@@ -158,7 +164,16 @@ namespace PortfolioManager.Presenter
         {
             _logger.LogDebug("SubscribeMarketData ");
 
-            _serviceClient.SubscribeAll(_portfolioDao.GetAllPortfolioItems().Select(x => x.Symbol).ToList());
+            try
+            {
+                _serviceClient.SubscribeAll(_portfolioDao.GetAllPortfolioItems().Select(x => x.Symbol).ToList());
+            }
+            catch (Exception ex)
+            {
+                string errorString = "Unable to subscribe for Market Data.";
+                _logger.LogError(errorString, ex);
+                HandleException(new Exception(errorString, ex));
+            }
 
         }
         #endregion
@@ -170,18 +185,40 @@ namespace PortfolioManager.Presenter
         /// <param name="symbol">symbol to add</param>
         /// <param name="shares">shares for the trade</param>
         /// <param name="price">price for the trade</param>
-        public int AddPortfolioClicked(String symbol, long shares, double price)
+        public void AddPortfolioClicked(String symbol, long shares, double price)
         {
+            //try
+            //{
+                Save(new PortfolioDataEntity(symbol, shares, price));
+            //}
+            //catch (Exception ex)
+            //{
+            //    string errorString = "Unable to save trade.";
+            //    _logger.LogError(errorString, ex);
+            //    HandleException(new Exception(errorString, ex));
+            //}
 
-            Save(new PortfolioDataEntity(symbol, shares, price));
+            //try
+            //{
+                _portfolioView.UpdatePortfolioItems();
+            //}
+            //catch (Exception ex)
+            //{
+            //    string errorString = "Unable to update the GUI.";
+            //    _logger.LogError(errorString, ex);
+            //    HandleException(new Exception(errorString, ex));
+            //}
 
-            _portfolioView.UpdatePortfolioItems();
-
-            _serviceClient.Subscribe(symbol);
-
-            //_tradeDataMapper.SaveTradeAsync(symbol, shares, price);
-
-            return 0;
+            //try
+            //{
+                _serviceClient.Subscribe(symbol);
+            //}
+            //catch (Exception ex)
+            //{
+            //    string errorString = "Unable to subscribe market data.";
+            //    _logger.LogError(errorString, ex);
+            //    HandleException(new Exception(errorString, ex));
+            //}
         } 
         #endregion
 
@@ -224,14 +261,23 @@ namespace PortfolioManager.Presenter
         /// <param name="args">market data updates</param>
         public void OnSignalled( IEnumerable<GenericsEventArgs<IMarketDataEntity>> args) 
         {
-            foreach (GenericsEventArgs<IMarketDataEntity> item in args)
+            try
             {
-                IMarketDataEntity mktData = item.Item;
+                foreach (GenericsEventArgs<IMarketDataEntity> item in args)
+                {
+                    IMarketDataEntity mktData = item.Item;
 
-                _logger.LogDebug("OnSignalled " + mktData.Symbol + mktData.LastPrice.ToString());
+                    _logger.LogDebug("OnSignalled " + mktData.Symbol + mktData.LastPrice.ToString());
 
-                _portfolioDao.Save(mktData.Symbol, mktData);
-            }          
+                    _portfolioDao.Save(mktData.Symbol, mktData);
+                }      
+            }
+            catch (Exception ex)
+            {
+                string errorString = "Unable to subscribe market data.";
+                _logger.LogError(errorString, ex);
+                //HandleException(new Exception(errorString, ex));
+            }
             
         }
 

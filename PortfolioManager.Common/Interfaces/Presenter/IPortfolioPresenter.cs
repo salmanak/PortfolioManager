@@ -21,8 +21,7 @@ namespace PortfolioManager.Common.Interfaces.Presenter
         /// <param name="symbol"></param>
         /// <param name="shares"></param>
         /// <param name="price"></param>
-        /// <returns></returns>
-        int AddPortfolioClicked(string symbol, long shares, double price);
+        void AddPortfolioClicked(string symbol, long shares, double price);
         
         /// <summary>
         /// Method to be called from View when closing the application is required
