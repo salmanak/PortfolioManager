@@ -207,7 +207,7 @@ namespace PortfolioManager.View
 
             if (txtSymbol.Text.Length > maxLength)
             {
-                MessageBox.Show("Please enter correct _symbol.");
+                MessageBox.Show("Please enter correct symbol.");
                 txtSymbol.Text = txtSymbol.Text.Substring(0, maxLength);
             }
         }
@@ -220,13 +220,13 @@ namespace PortfolioManager.View
             {
                 if (numberEntered < 1 || numberEntered > 100000000)
                 {
-                    MessageBox.Show("Please enter correct _shares.");
+                    MessageBox.Show("Please enter correct shares.");
                     txtShares.Text = "0";
                 }
             }
             else
             {
-                MessageBox.Show("Please enter correct _shares");
+                MessageBox.Show("Please enter correct shares");
                 txtShares.Text = "0";
             }
 
@@ -239,7 +239,7 @@ namespace PortfolioManager.View
 
             if (numberEntered < 1 || numberEntered > 10000)
             {
-                MessageBox.Show("Please enter correct _price.");
+                MessageBox.Show("Please enter correct price.");
                 txtPrice.Text = "0";
             }
             
